@@ -16,3 +16,13 @@ spec:
                 name: nginx
                 port:
                   number: 80
+    - host: auth.z-script.io
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: keycloak
+                port:
+                  number: 8080
