@@ -1,0 +1,39 @@
+# commands
+kubecrl get pods -A
+kubectl logs -n default alpine-nc-7b8c8b45f6-6p7w7
+kubectl exec -it -n argocd argocd-server-749686d95c-zwb7f --bash
+kubectl port-forward svc/argocd-server -n argocd --address 0.0.0.0   8080:443
+
+kubectl apply -n argocd -f https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml
+
+kubectl rollout restart deployment postgres -n database
+kubectl exec -it -n database deploy/postgres -- psql -U appuser -d appdb
+#or
+kubectl port-forward -n database svc/postgres 5432:5432
+
+# create secret
+kubectl create secret generic postgres-secret \
+  -n database \
+  --from-literal=POSTGRES_USER=appuser \
+  --from-literal=POSTGRES_PASSWORD=Murad2201 \
+  --from-literal=POSTGRES_DB=appdb
+
+or 
+
+kubectl apply -f secret.yaml 
+'
+cat secret-keycloak.yaml 
+apiVersion: v1
+kind: Secret
+metadata:
+  name: keycloak-db-secret
+  namespace: keycloak
+type: Opaque
+stringData:
+  KC_DB: postgres
+  KC_DB_URL: jdbc:postgresql://postgres.database.svc.cluster.local:5432/appdb
+  KC_DB_USERNAME: appuser
+  KC_DB_PASSWORD: asasasasasa
+  KEYCLOAK_ADMIN: admin
+  KEYCLOAK_ADMIN_PASSWORD: "SuperSecretPassword"
+'
