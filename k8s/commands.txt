@@ -10,3 +10,30 @@ kubectl rollout restart deployment postgres -n database
 kubectl exec -it -n database deploy/postgres -- psql -U appuser -d appdb
 #or
 kubectl port-forward -n database svc/postgres 5432:5432
+
+# create secret
+kubectl create secret generic postgres-secret \
+  -n database \
+  --from-literal=POSTGRES_USER=appuser \
+  --from-literal=POSTGRES_PASSWORD=Murad2201 \
+  --from-literal=POSTGRES_DB=appdb
+
+or 
+
+kubectl apply -f secret.yaml 
+'
+cat secret-keycloak.yaml 
+apiVersion: v1
+kind: Secret
+metadata:
+  name: keycloak-db-secret
+  namespace: keycloak
+type: Opaque
+stringData:
+  KC_DB: postgres
+  KC_DB_URL: jdbc:postgresql://postgres.database.svc.cluster.local:5432/appdb
+  KC_DB_USERNAME: appuser
+  KC_DB_PASSWORD: Murad2201
+  KEYCLOAK_ADMIN: admin
+  KEYCLOAK_ADMIN_PASSWORD: "SuperSecretPassword"
+'
