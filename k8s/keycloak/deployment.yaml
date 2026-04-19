@@ -21,12 +21,20 @@ spec:
       containers:
         - name: keycloak
           image: quay.io/keycloak/keycloak:25.0
-          args: ["start-dev"]
+
+          args:
+            - start-dev
+            - --proxy=edge
+            - --hostname=auth.example.com
 
           ports:
             - containerPort: 8080
+              name: http
 
           env:
+            # =========================
+            # Database configuration
+            # =========================
             - name: KC_DB
               valueFrom:
                 secretKeyRef:
@@ -51,6 +59,9 @@ spec:
                   name: keycloak-db-secret
                   key: KC_DB_PASSWORD
 
+            # =========================
+            # Admin user
+            # =========================
             - name: KEYCLOAK_ADMIN
               valueFrom:
                 secretKeyRef:
@@ -62,19 +73,41 @@ spec:
                 secretKeyRef:
                   name: keycloak-db-secret
                   key: KEYCLOAK_ADMIN_PASSWORD
-                  
+
             - name: KC_PROXY
-              name: "edge"
-              
+              value: "edge"
+
             - name: KC_HOSTNAME
-              name: "auth.z-script.io"
-              
+              value: "auth.example.com"
+
             - name: KC_HTTP_ENABLED
-              name: "true"
+              value: "true"
 
           volumeMounts:
             - name: kc-storage
               mountPath: /opt/keycloak/data
+
+          readinessProbe:
+            httpGet:
+              path: /realms/master
+              port: 8080
+            initialDelaySeconds: 30
+            periodSeconds: 10
+
+          livenessProbe:
+            httpGet:
+              path: /realms/master
+              port: 8080
+            initialDelaySeconds: 60
+            periodSeconds: 20
+
+          resources:
+            requests:
+              cpu: "250m"
+              memory: "512Mi"
+            limits:
+              cpu: "1"
+              memory: "1Gi"
 
       volumes:
         - name: kc-storage
