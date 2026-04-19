@@ -1,0 +1,73 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: keycloak
+  namespace: keycloak
+  labels:
+    app: keycloak
+    tier: auth
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: keycloak
+  template:
+    metadata:
+      labels:
+        app: keycloak
+        tier: auth
+        access: internal
+    spec:
+      containers:
+        - name: keycloak
+          image: quay.io/keycloak/keycloak:25.0
+          args: ["start-dev"]
+
+          ports:
+            - containerPort: 8080
+
+          env:
+            - name: KC_DB
+              valueFrom:
+                secretKeyRef:
+                  name: keycloak-db-secret
+                  key: KC_DB
+
+            - name: KC_DB_URL
+              valueFrom:
+                secretKeyRef:
+                  name: keycloak-db-secret
+                  key: KC_DB_URL
+
+            - name: KC_DB_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: keycloak-db-secret
+                  key: KC_DB_USERNAME
+
+            - name: KC_DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: keycloak-db-secret
+                  key: KC_DB_PASSWORD
+
+            - name: KEYCLOAK_ADMIN
+              valueFrom:
+                secretKeyRef:
+                  name: keycloak-db-secret
+                  key: KEYCLOAK_ADMIN
+
+            - name: KEYCLOAK_ADMIN_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: keycloak-db-secret
+                  key: KEYCLOAK_ADMIN_PASSWORD
+
+          volumeMounts:
+            - name: kc-storage
+              mountPath: /opt/keycloak/data
+
+      volumes:
+        - name: kc-storage
+          persistentVolumeClaim:
+            claimName: keycloak-pvc
