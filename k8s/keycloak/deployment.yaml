@@ -62,6 +62,15 @@ spec:
                 secretKeyRef:
                   name: keycloak-db-secret
                   key: KEYCLOAK_ADMIN_PASSWORD
+                  
+            - name: KC_PROXY
+              name: "edge"
+              
+            - name: KC_HOSTNAME
+              name: "auth.z-script.io"
+              
+            - name: KC_HTTP_ENABLED
+              name: "true"
 
           volumeMounts:
             - name: kc-storage
