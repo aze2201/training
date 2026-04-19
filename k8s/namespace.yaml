@@ -1,0 +1,8 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: nifi
+  labels:
+    name: nifi
+    app: nifi
+    tier: data
