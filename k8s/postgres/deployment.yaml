@@ -5,8 +5,8 @@ metadata:
   namespace: database
   labels:
     app: postgres
-    tier: backend
     role: database
+    tier: backend
 spec:
   replicas: 1
   selector:
@@ -17,8 +17,8 @@ spec:
     metadata:
       labels:
         app: postgres
-        tier: backend
         role: database
+        tier: backend
         access: internal
     spec:
       containers:
@@ -28,14 +28,27 @@ spec:
             - containerPort: 5432
           env:
             - name: POSTGRES_DB
-              value: appdb
+              valueFrom:
+                secretKeyRef:
+                  name: postgres-secret
+                  key: POSTGRES_DB
+
             - name: POSTGRES_USER
-              value: appuser
+              valueFrom:
+                secretKeyRef:
+                  name: postgres-secret
+                  key: POSTGRES_USER
+
             - name: POSTGRES_PASSWORD
-              value: securepassword
+              valueFrom:
+                secretKeyRef:
+                  name: postgres-secret
+                  key: POSTGRES_PASSWORD
+
           volumeMounts:
             - name: postgres-storage
               mountPath: /var/lib/postgresql/data
+
           resources:
             requests:
               memory: "256Mi"
@@ -43,6 +56,7 @@ spec:
             limits:
               memory: "1Gi"
               cpu: "1"
+
       volumes:
         - name: postgres-storage
           persistentVolumeClaim:
