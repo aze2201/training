@@ -5,3 +5,4 @@ kubectl exec -it -n argocd argocd-server-749686d95c-zwb7f --bash
 kubectl port-forward svc/argocd-server -n argocd --address 0.0.0.0   8080:443
 
 kubectl apply -n argocd -f https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml
+kubectl rollout restart deployment postgres -n database
