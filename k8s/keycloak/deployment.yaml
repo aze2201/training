@@ -76,15 +76,10 @@ spec:
               
             - name: KC_HOSTNAME_STRICT
               value: "false"
-              
-            - name: KC_HOSTNAME_STRICT_HTTPS
-              value: "false"
-              
+                    
             - name: KC_PROXY_ADDRESS_FORWARDING
               value: "true"
               
-            - name: KC_PROXY_HEADERS
-              value: "xforwarded"
 
           volumeMounts:
             - name: kc-storage
