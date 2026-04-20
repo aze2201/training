@@ -85,9 +85,6 @@ spec:
               
             - name: KC_HOSTNAME_STRICT_HTTPS
               value: "false"
-            
-            - name: KC_HOSTNAME_URL
-              value: "https://auth.z-script.io"
               
             - name: KC_PROXY_ADDRESS_FORWARDING
               value: "true"
