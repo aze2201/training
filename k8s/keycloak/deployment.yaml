@@ -90,7 +90,10 @@ spec:
               value: "https://auth.z-script.io"
               
             - name: KC_PROXY_ADDRESS_FORWARDING
-              value: "true"  
+              value: "true"
+              
+            - name: KC_PROXY_HEADERS
+              value: "xforwarded"  
 
           volumeMounts:
             - name: kc-storage
