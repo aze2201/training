@@ -24,8 +24,6 @@ spec:
 
           args:
             - start-dev
-            - --proxy-headers=xforwarded
-            - --hostname=auth.z-script.io
           ports:
             - containerPort: 8080
               name: http
@@ -73,11 +71,10 @@ spec:
               value: "true"
               
             - name: KC_HOSTNAME_STRICT
-              value: "false"
-                    
-            - name: KC_PROXY_ADDRESS_FORWARDING
               value: "true"
               
+            - name: KC_PROXY
+              value: edge
 
           volumeMounts:
             - name: kc-storage
