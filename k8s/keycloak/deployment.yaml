@@ -85,9 +85,6 @@ spec:
             - name: KC_PROXY_HEADERS
               value: "xforwarded"
 
-            - name: KC_HEALTH_ENABLED
-              value: "true"
-
           volumeMounts:
             - name: kc-storage
               mountPath: /opt/keycloak/data
