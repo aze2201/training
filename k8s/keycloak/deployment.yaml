@@ -89,7 +89,7 @@ spec:
               value: "https://auth.z-script.io"
             
             - name: KC_HOSTNAME_ADMIN
-              value: "https://auth.z-script.io/admin"
+              value: "https://auth.z-script.io"
             
             - name: KC_HOSTNAME_STRICT
               value: "false"
