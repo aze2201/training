@@ -26,7 +26,6 @@ spec:
             - start
             - --proxy-headers=xforwarded
             - --hostname=auth.z-script.io
-            - --cache=local
           ports:
             - containerPort: 8080
               name: http
