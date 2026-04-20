@@ -83,10 +83,10 @@ spec:
               value: "edge"
               
             - name: KC_HOSTNAME
-              value: "auth.z-script.io"
+              value: "https://auth.z-script.io"
             
             - name: KC_HOSTNAME_ADMIN
-              value: "auth.z-script.io"
+              value: "https://auth.z-script.io/admin"
             
             - name: KC_HOSTNAME_STRICT
               value: "false"
