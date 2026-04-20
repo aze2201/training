@@ -26,10 +26,11 @@ spec:
             - start
             - --proxy-headers=xforwarded
             - --hostname=auth.z-script.io
+            - --cache=local
+            - --optimized
           ports:
             - containerPort: 8080
               name: http
-
           env:
             - name: KC_DB
               valueFrom:
@@ -84,12 +85,6 @@ spec:
               
             - name: KC_PROXY_HEADERS
               value: "xforwarded"
-
-            -name: KC_CACHE
-             value: "local"
-             
-            -name: KC_CACHE_STACK
-             value: "local"
 
           volumeMounts:
             - name: kc-storage
