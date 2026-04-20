@@ -31,9 +31,6 @@ spec:
               name: http
 
           env:
-            # =========================
-            # Database configuration
-            # =========================
             - name: KC_DB
               valueFrom:
                 secretKeyRef:
@@ -58,10 +55,6 @@ spec:
                   name: keycloak-db-secret
                   key: KC_DB_PASSWORD
 
-
-            # =========================
-            # Admin user
-            # =========================
             - name: KEYCLOAK_ADMIN
               valueFrom:
                 secretKeyRef:
@@ -90,7 +83,10 @@ spec:
               value: "true"
               
             - name: KC_PROXY_HEADERS
-              value: "xforwarded"  
+              value: "xforwarded"
+
+            - name: KC_HEALTH_ENABLED
+              value: "true"
 
           volumeMounts:
             - name: kc-storage
