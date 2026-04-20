@@ -87,7 +87,7 @@ spec:
               value: "false"
             
             - name: KC_HOSTNAME_URL
-            value: "https://auth.z-script.io"  
+              value: "https://auth.z-script.io"  
 
           volumeMounts:
             - name: kc-storage
