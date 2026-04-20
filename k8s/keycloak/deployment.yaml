@@ -58,6 +58,7 @@ spec:
                   name: keycloak-db-secret
                   key: KC_DB_PASSWORD
 
+
             # =========================
             # Admin user
             # =========================
@@ -84,6 +85,9 @@ spec:
               
             - name: KC_HOSTNAME_STRICT_HTTPS
               value: "false"
+            
+            - name: KC_HOSTNAME_URL
+            value: "https://auth.z-script.io"  
 
           volumeMounts:
             - name: kc-storage
