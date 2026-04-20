@@ -11,9 +11,6 @@ metadata:
     nginx.ingress.kubernetes.io/backend-protocol: "HTTP"
     nginx.ingress.kubernetes.io/force-ssl-redirect: "false"
 
-    # Required for Keycloak behind proxy
-    nginx.ingress.kubernetes.io/backend-protocol: "HTTP"
-
 spec:
   ingressClassName: nginx
   rules:
