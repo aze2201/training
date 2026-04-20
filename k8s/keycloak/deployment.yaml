@@ -85,6 +85,12 @@ spec:
             - name: KC_PROXY_HEADERS
               value: "xforwarded"
 
+            -name: KC_CACHE
+             value: "local"
+             
+            -name: KC_CACHE_STACK
+             value: "local"
+
           volumeMounts:
             - name: kc-storage
               mountPath: /opt/keycloak/data
