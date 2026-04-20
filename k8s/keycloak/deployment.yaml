@@ -6,21 +6,17 @@ metadata:
   labels:
     app: keycloak
     tier: auth
-
 spec:
   replicas: 1
-
   selector:
     matchLabels:
       app: keycloak
-
   template:
     metadata:
       labels:
         app: keycloak
         tier: auth
         access: internal
-
     spec:
       containers:
         - name: keycloak
@@ -30,7 +26,6 @@ spec:
             - start-dev
             - --proxy-headers=xforwarded
             - --hostname=auth.z-script.io
-
           ports:
             - containerPort: 8080
               name: http
@@ -78,24 +73,32 @@ spec:
                   name: keycloak-db-secret
                   key: KEYCLOAK_ADMIN_PASSWORD
 
-            # =========================
-            # Proxy / Host configuration
-            # =========================
+            - name: KC_HTTP_ENABLED
+              value: "true"
+
+            - name: KC_PROXY_HEADERS
+              value: "xforwarded"
+            
             - name: KC_PROXY
               value: "edge"
-
+              
             - name: KC_HOSTNAME
-              value: "auth.z-script.io"
+              value: "https://auth.z-script.io"
 
             - name: KC_HOSTNAME_URL
               value: "https://auth.z-script.io"
-
-            - name: KC_HOSTNAME_ADMIN_URL
+            
+            - name: KC_HOSTNAME_ADMIN
               value: "https://auth.z-script.io"
-
-            # Disable HTTP externally (prevents mixed content)
-            - name: KC_HTTP_ENABLED
+            
+            - name: KC_HOSTNAME_STRICT
               value: "false"
+              
+            - name: KC_HOSTNAME_STRICT_HTTPS
+              value: "false"
+            
+            - name: KC_HTTP_PORT
+              value: "8080"
 
           volumeMounts:
             - name: kc-storage
