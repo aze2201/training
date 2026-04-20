@@ -73,9 +73,6 @@ spec:
                   name: keycloak-db-secret
                   key: KEYCLOAK_ADMIN_PASSWORD
 
-            - name: KC_PROXY
-              value: "edge"
-
             - name: KC_HOSTNAME
               value: "auth.z-script.io"
 
