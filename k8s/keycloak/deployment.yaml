@@ -25,7 +25,7 @@ spec:
           args:
             - start-dev
             - --proxy-headers=xforwarded
-            #- --hostname=auth.z-script.io
+            - --hostname=auth.z-script.io
           ports:
             - containerPort: 8080
               name: http
