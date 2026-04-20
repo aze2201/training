@@ -24,10 +24,16 @@ spec:
 
           args:
             - start-dev
+            - --proxy-headers=xforwarded
+            - --hostname=auth.z-script.io
           ports:
             - containerPort: 8080
               name: http
+
           env:
+            # =========================
+            # Database configuration
+            # =========================
             - name: KC_DB
               valueFrom:
                 secretKeyRef:
@@ -52,6 +58,9 @@ spec:
                   name: keycloak-db-secret
                   key: KC_DB_PASSWORD
 
+            # =========================
+            # Admin user
+            # =========================
             - name: KEYCLOAK_ADMIN
               valueFrom:
                 secretKeyRef:
@@ -64,6 +73,9 @@ spec:
                   name: keycloak-db-secret
                   key: KEYCLOAK_ADMIN_PASSWORD
 
+            - name: KC_PROXY
+              value: "edge"
+
             - name: KC_HOSTNAME
               value: "auth.z-script.io"
 
@@ -71,6 +83,9 @@ spec:
               value: "true"
               
             - name: KC_HOSTNAME_STRICT
+              value: "false"
+              
+            - name: KC_HOSTNAME_STRICT_HTTPS
               value: "false"
 
           volumeMounts:
