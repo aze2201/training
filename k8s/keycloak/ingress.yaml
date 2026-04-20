@@ -8,7 +8,6 @@ metadata:
     tier: auth
   annotations:
   	kubernetes.io/ingress.class: nginx
-	nginx.ingress.kubernetes.io/force-ssl-redirect: "false"
 	nginx.ingress.kubernetes.io/backend-protocol: "HTTP"
 	
 spec:
