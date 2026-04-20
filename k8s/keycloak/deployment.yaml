@@ -23,7 +23,7 @@ spec:
           image: quay.io/keycloak/keycloak:25.0
 
           args:
-            - start-dev
+            - start
             - --proxy-headers=xforwarded
             - --hostname=auth.z-script.io
           ports:
