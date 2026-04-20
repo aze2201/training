@@ -74,28 +74,19 @@ spec:
                   key: KEYCLOAK_ADMIN_PASSWORD
 
             - name: KC_HTTP_ENABLED
-              value: "true"
-
-            - name: KC_PROXY_HEADERS
-              value: "xforwarded"
+              value: "false"
             
             - name: KC_PROXY
               value: "edge"
               
             - name: KC_HOSTNAME
-              value: "https://auth.z-script.io"
+              value: "auth.z-script.io"
 
             - name: KC_HOSTNAME_URL
               value: "https://auth.z-script.io"
             
-            - name: KC_HOSTNAME_ADMIN
+            - name: KC_HOSTNAME_ADMIN_URL
               value: "https://auth.z-script.io"
-            
-            - name: KC_HOSTNAME_STRICT
-              value: "false"
-              
-            - name: KC_HOSTNAME_STRICT_HTTPS
-              value: "false"
             
             - name: KC_HTTP_PORT
               value: "8080"
