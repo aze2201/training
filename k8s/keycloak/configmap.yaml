@@ -1,7 +1,17 @@
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: custom-headers
-  namespace: ingress-nginx
+  name: keycloak-config
+  namespace: keycloak
 data:
-  X-Forwarded-Proto: https
+  KC_HTTP_ENABLED: "true"
+  KC_HTTP_PORT: "8080"
+
+  KC_PROXY_HEADERS: "xforwarded"
+
+  KC_HOSTNAME: "auth.z-script.io"
+  KC_HOSTNAME_URL: "https://auth.z-script.io"
+  KC_HOSTNAME_ADMIN_URL: "https://auth.z-script.io"
+
+  KC_HOSTNAME_STRICT: "false"
+  KC_HOSTNAME_STRICT_HTTPS: "false"
