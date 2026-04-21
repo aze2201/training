@@ -75,26 +75,14 @@ spec:
 
             - name: KC_HTTP_ENABLED
               value: "true"
-
-            - name: KC_PROXY_HEADERS
-              value: "xforwarded"
             
             - name: KC_PROXY
               value: "edge"
               
             - name: KC_HOSTNAME
               value: "auth.z-script.io"
-
-            - name: KC_HOSTNAME_URL
-              value: "https://auth.z-script.io"
-            
-            - name: KC_HOSTNAME_ADMIN
-              value: "https://auth.z-script.io"
             
             - name: KC_HOSTNAME_STRICT
-              value: "false"
-              
-            - name: KC_HOSTNAME_STRICT_HTTPS
               value: "false"
             
             - name: KC_HTTP_PORT
