@@ -24,10 +24,9 @@ spec:
           args:
             - start-dev
             - --proxy-headers=xforwarded
-            - --proxy-address-forwarding=true
-            - --hostname=auth.z-script.io
+            - --hostname=https://auth.z-script.io
             - --hostname-strict=false
-            - --hostname-strict-https=false
+            - --http-enabled=true
           ports:
             - containerPort: 8080
               name: http
@@ -68,13 +67,19 @@ spec:
                 secretKeyRef:
                   name: keycloak-db-secret
                   key: KEYCLOAK_ADMIN_PASSWORD
-            # =========================
-            # HTTP/Proxy settings
-            # =========================
             - name: KC_HTTP_ENABLED
               value: "true"
             - name: KC_HTTP_PORT
               value: "8080"
+            # Explicitly tell Keycloak its public URL is HTTPS
+            - name: KC_HOSTNAME_URL
+              value: "https://auth.z-script.io"
+            - name: KC_HOSTNAME_ADMIN_URL
+              value: "https://auth.z-script.io"
+            - name: KC_HOSTNAME_STRICT
+              value: "false"
+            - name: KC_HOSTNAME_STRICT_HTTPS
+              value: "false"
           volumeMounts:
             - name: kc-storage
               mountPath: /opt/keycloak/data
