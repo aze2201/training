@@ -12,6 +12,7 @@ data:
   KC_HOSTNAME: "auth.z-script.io"
   KC_HOSTNAME_URL: "https://auth.z-script.io"
   KC_HOSTNAME_ADMIN_URL: "https://auth.z-script.io"
+  KC_PROXY: "edge"
 
   KC_HOSTNAME_STRICT: "false"
   KC_HOSTNAME_STRICT_HTTPS: "false"
