@@ -21,15 +21,16 @@ spec:
       containers:
         - name: keycloak
           image: quay.io/keycloak/keycloak:25.0
-
           args:
             - start-dev
             - --proxy-headers=xforwarded
+            - --proxy-address-forwarding=true
             - --hostname=auth.z-script.io
+            - --hostname-strict=false
+            - --hostname-strict-https=false
           ports:
             - containerPort: 8080
               name: http
-
           env:
             # =========================
             # Database configuration
@@ -39,25 +40,21 @@ spec:
                 secretKeyRef:
                   name: keycloak-db-secret
                   key: KC_DB
-
             - name: KC_DB_URL
               valueFrom:
                 secretKeyRef:
                   name: keycloak-db-secret
                   key: KC_DB_URL
-
             - name: KC_DB_USERNAME
               valueFrom:
                 secretKeyRef:
                   name: keycloak-db-secret
                   key: KC_DB_USERNAME
-
             - name: KC_DB_PASSWORD
               valueFrom:
                 secretKeyRef:
                   name: keycloak-db-secret
                   key: KC_DB_PASSWORD
-
             # =========================
             # Admin user
             # =========================
@@ -66,46 +63,33 @@ spec:
                 secretKeyRef:
                   name: keycloak-db-secret
                   key: KEYCLOAK_ADMIN
-
             - name: KEYCLOAK_ADMIN_PASSWORD
               valueFrom:
                 secretKeyRef:
                   name: keycloak-db-secret
                   key: KEYCLOAK_ADMIN_PASSWORD
-
+            # =========================
+            # HTTP/Proxy settings
+            # =========================
             - name: KC_HTTP_ENABLED
               value: "true"
-            
-            - name: KC_PROXY
-              value: "edge"
-              
-            - name: KC_HOSTNAME
-              value: "auth.z-script.io"
-            
-            - name: KC_HOSTNAME_STRICT
-              value: "false"
-            
             - name: KC_HTTP_PORT
               value: "8080"
-
           volumeMounts:
             - name: kc-storage
               mountPath: /opt/keycloak/data
-
           readinessProbe:
             httpGet:
               path: /realms/master
               port: 8080
             initialDelaySeconds: 30
             periodSeconds: 10
-
           livenessProbe:
             httpGet:
               path: /realms/master
               port: 8080
             initialDelaySeconds: 60
             periodSeconds: 20
-
           resources:
             requests:
               cpu: "250m"
@@ -113,7 +97,6 @@ spec:
             limits:
               cpu: "1"
               memory: "1Gi"
-
       volumes:
         - name: kc-storage
           persistentVolumeClaim:
