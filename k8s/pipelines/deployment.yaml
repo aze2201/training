@@ -19,28 +19,30 @@ spec:
         app: nifi
         component: dataflow
         tier: backend
-        access: internal
+        access: internal   # for future NetworkPolicy
     spec:
       containers:
         - name: nifi
           image: apache/nifi:latest
 
           ports:
+            - containerPort: 8080
             - containerPort: 8443
 
           env:
-            # --- HTTPS ONLY MODE ---
+            # --- INTERNAL HTTP (for probes ONLY) ---
             - name: NIFI_WEB_HTTP_PORT
-              value: ""
+              value: "8080"
 
+            # --- EXTERNAL HTTPS ---
             - name: NIFI_WEB_HTTPS_PORT
               value: "8443"
 
-            # IMPORTANT: fixes your "Invalid SNI"
+            # REQUIRED for ingress / SNI
             - name: NIFI_WEB_PROXY_HOST
               value: pipeline.z-script.io
 
-            # JVM tuning
+            # JVM
             - name: NIFI_JVM_HEAP_INIT
               value: "1g"
             - name: NIFI_JVM_HEAP_MAX
@@ -59,14 +61,12 @@ spec:
               mountPath: /opt/nifi/nifi-current/data
 
           # ---------------------------
-          # PROBES (IMPORTANT FIX)
+          # PROBES (HTTP ONLY!)
           # ---------------------------
-
           startupProbe:
             httpGet:
               path: /nifi-api/access/config
-              port: 8443
-              scheme: HTTPS
+              port: 8080
             initialDelaySeconds: 120
             periodSeconds: 10
             failureThreshold: 30
@@ -75,8 +75,7 @@ spec:
           readinessProbe:
             httpGet:
               path: /nifi-api/access/config
-              port: 8443
-              scheme: HTTPS
+              port: 8080
             initialDelaySeconds: 120
             periodSeconds: 15
             failureThreshold: 10
@@ -85,8 +84,7 @@ spec:
           livenessProbe:
             httpGet:
               path: /nifi-api/access/config
-              port: 8443
-              scheme: HTTPS
+              port: 8080
             initialDelaySeconds: 240
             periodSeconds: 20
             failureThreshold: 5
@@ -96,9 +94,3 @@ spec:
         - name: nifi-data
           persistentVolumeClaim:
             claimName: nifi-data
-
-      # ---------------------------
-      # FUTURE NETWORK POLICY HOOK
-      # ---------------------------
-      # labels already include:
-      # access: internal
