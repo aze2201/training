@@ -22,7 +22,7 @@ spec:
         app: nifi
         component: dataflow
         tier: backend
-        access: internal   # future NetworkPolicy selector (not used yet)
+        access: internal
 
     spec:
       containers:
@@ -31,12 +31,20 @@ spec:
           imagePullPolicy: IfNotPresent
 
           ports:
+            - name: http
+              containerPort: 8080
             - name: https
               containerPort: 8443
-              protocol: TCP
 
           env:
-            # JVM tuning (important for stability)
+            # INTERNAL (for Kubernetes probes)
+            - name: NIFI_WEB_HTTP_PORT
+              value: "8080"
+
+            # EXTERNAL (for ingress / cloudflare)
+            - name: NIFI_WEB_HTTPS_PORT
+              value: "8443"
+
             - name: NIFI_JVM_HEAP_INIT
               value: "1g"
             - name: NIFI_JVM_HEAP_MAX
@@ -54,40 +62,36 @@ spec:
             - name: nifi-data
               mountPath: /opt/nifi/nifi-current/data
 
-          # -------------------------
-          # STARTUP PROBE (CRITICAL)
-          # prevents liveness killing NiFi during boot
-          # -------------------------
+          # =========================
+          # STARTUP PROBE (HTTP ONLY)
+          # =========================
           startupProbe:
             httpGet:
               path: /nifi-api/access/config
-              port: 8443
-              scheme: HTTPS
+              port: 8080
             periodSeconds: 10
-            failureThreshold: 30   # ~5 minutes grace time
+            failureThreshold: 30
 
-          # -------------------------
+          # =========================
           # READINESS PROBE
-          # -------------------------
+          # =========================
           readinessProbe:
             httpGet:
               path: /nifi-api/access/config
-              port: 8443
-              scheme: HTTPS
-            initialDelaySeconds: 180
+              port: 8080
+            initialDelaySeconds: 120
             periodSeconds: 15
             timeoutSeconds: 5
             failureThreshold: 10
 
-          # -------------------------
+          # =========================
           # LIVENESS PROBE
-          # -------------------------
+          # =========================
           livenessProbe:
             httpGet:
               path: /nifi-api/access/config
-              port: 8443
-              scheme: HTTPS
-            initialDelaySeconds: 300
+              port: 8080
+            initialDelaySeconds: 240
             periodSeconds: 20
             timeoutSeconds: 5
             failureThreshold: 5
