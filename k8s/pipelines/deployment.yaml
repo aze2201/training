@@ -24,30 +24,55 @@ spec:
         - name: nifi
           image: apache/nifi:latest
           imagePullPolicy: IfNotPresent
+
           ports:
             - name: http
               containerPort: 8080
-              protocol: TCP
+
           env:
+            # FORCE HTTP MODE
             - name: NIFI_WEB_HTTP_PORT
               value: "8080"
+            - name: NIFI_WEB_HTTPS_PORT
+              value: ""
+
             - name: NIFI_WEB_PROXY_HOST
-              value: "pipelne.z-script.io"
+              value: "pipeline.z-script.io"
+
+            # JVM tuning (IMPORTANT)
+            - name: NIFI_JVM_HEAP_INIT
+              value: "1g"
+            - name: NIFI_JVM_HEAP_MAX
+              value: "2g"
+
+          resources:
+            requests:
+              memory: "2Gi"
+              cpu: "500m"
+            limits:
+              memory: "4Gi"
+              cpu: "1"
+
           volumeMounts:
             - name: nifi-data
               mountPath: /opt/nifi/nifi-current/data
+
           readinessProbe:
             httpGet:
               path: /nifi
               port: 8080
-            initialDelaySeconds: 30
+            initialDelaySeconds: 90
             periodSeconds: 10
+            failureThreshold: 6
+
           livenessProbe:
             httpGet:
               path: /nifi
               port: 8080
-            initialDelaySeconds: 60
+            initialDelaySeconds: 120
             periodSeconds: 20
+            failureThreshold: 6
+
       volumes:
         - name: nifi-data
           persistentVolumeClaim:
