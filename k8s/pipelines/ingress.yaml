@@ -1,16 +1,26 @@
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: nifi
+  name: nifi-ingress
   namespace: nifi
+
   annotations:
-    nginx.ingress.kubernetes.io/backend-protocol: "HTTP"
-    nginx.ingress.kubernetes.io/proxy-body-size: "0"
-    nginx.ingress.kubernetes.io/proxy-read-timeout: "3600"
-    nginx.ingress.kubernetes.io/proxy-send-timeout: "3600"
+    kubernetes.io/ingress.class: nginx
+
+    # IMPORTANT for HTTPS upstream (NiFi uses self-signed cert)
+    nginx.ingress.kubernetes.io/backend-protocol: "HTTPS"
+
+    # avoid redirect loops with Cloudflare
+    nginx.ingress.kubernetes.io/ssl-redirect: "true"
+
+    # future network policy hook (important labeling hook)
+    ingress.kubernetes.io/allowed-ips: "0.0.0.0/0"
 
 spec:
-  ingressClassName: nginx
+  tls:
+    - hosts:
+        - pipeline.z-script.io
+      secretName: nifi-tls-secret   # replace if Cloudflare-managed
 
   rules:
     - host: pipeline.z-script.io
@@ -20,6 +30,6 @@ spec:
             pathType: Prefix
             backend:
               service:
-                name: nifi
+                name: nifi-service
                 port:
-                  number: 80
+                  number: 8443
