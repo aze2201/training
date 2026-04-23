@@ -19,6 +19,7 @@ spec:
         app: nifi
         component: dataflow
         tier: backend
+        access: internal  
     spec:
       containers:
         - name: nifi
@@ -26,24 +27,20 @@ spec:
           imagePullPolicy: IfNotPresent
 
           ports:
-            - name: http
-              containerPort: 8080
+            - name: https
+              containerPort: 8443
+              protocol: TCP
 
           env:
-            # FORCE HTTP MODE
-            - name: NIFI_WEB_HTTP_PORT
-              value: "8080"
-            - name: NIFI_WEB_HTTPS_PORT
-              value: ""
-
-            - name: NIFI_WEB_PROXY_HOST
-              value: "pipeline.z-script.io"
-
-            # JVM tuning (IMPORTANT)
+            # JVM tuning
             - name: NIFI_JVM_HEAP_INIT
               value: "1g"
             - name: NIFI_JVM_HEAP_MAX
               value: "2g"
+
+            # (FOR LATER - DO NOT ENABLE YET)
+            # - name: NIFI_WEB_PROXY_HOST
+            #   value: "pipeline.z-script.io"
 
           resources:
             requests:
@@ -60,7 +57,8 @@ spec:
           readinessProbe:
             httpGet:
               path: /nifi
-              port: 8080
+              port: 8443
+              scheme: HTTPS
             initialDelaySeconds: 90
             periodSeconds: 10
             failureThreshold: 6
@@ -68,7 +66,8 @@ spec:
           livenessProbe:
             httpGet:
               path: /nifi
-              port: 8080
+              port: 8443
+              scheme: HTTPS
             initialDelaySeconds: 120
             periodSeconds: 20
             failureThreshold: 6
