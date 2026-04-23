@@ -3,20 +3,15 @@ kind: Ingress
 metadata:
   name: nifi
   namespace: nifi
-  labels:
-    app: nifi
-    tier: edge
   annotations:
-    nginx.ingress.kubernetes.io/backend-protocol: "HTTPS"
+    nginx.ingress.kubernetes.io/backend-protocol: "HTTP"
     nginx.ingress.kubernetes.io/proxy-body-size: "0"
     nginx.ingress.kubernetes.io/proxy-read-timeout: "3600"
     nginx.ingress.kubernetes.io/proxy-send-timeout: "3600"
 
-    # (FOR LATER TLS  OIDC)
-    # nginx.ingress.kubernetes.io/ssl-redirect: "true"
-
 spec:
   ingressClassName: nginx
+
   rules:
     - host: pipeline.z-script.io
       http:
@@ -27,4 +22,4 @@ spec:
               service:
                 name: nifi
                 port:
-                  number: 443
+                  number: 80
