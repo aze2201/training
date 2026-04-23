@@ -9,7 +9,11 @@ kubectl apply -n argocd -f https://raw.githubusercontent.com/argoproj/argo-cd/st
 
 kubectl rollout restart deployment postgres -n database
 
-#or
+kubectl delete rs -n nifi --all
+kubectl delete pod -n nifi --all
+
+
+
 kubectl port-forward -n database svc/postgres 5432:5432
 
 # create secret
