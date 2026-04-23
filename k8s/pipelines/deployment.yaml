@@ -7,15 +7,12 @@ metadata:
     app: nifi
     component: dataflow
     tier: backend
-
 spec:
   replicas: 1
-
   selector:
     matchLabels:
       app: nifi
       component: dataflow
-
   template:
     metadata:
       labels:
@@ -23,24 +20,27 @@ spec:
         component: dataflow
         tier: backend
         access: internal
-
     spec:
       containers:
         - name: nifi
           image: apache/nifi:latest
-          imagePullPolicy: IfNotPresent
 
           ports:
-            - name: http
-              containerPort: 8080
-            - name: https
-              containerPort: 8443
+            - containerPort: 8443
 
           env:
-            # EXTERNAL (for ingress / cloudflare)
+            # --- HTTPS ONLY MODE ---
+            - name: NIFI_WEB_HTTP_PORT
+              value: ""
+
             - name: NIFI_WEB_HTTPS_PORT
               value: "8443"
 
+            # IMPORTANT: fixes your "Invalid SNI"
+            - name: NIFI_WEB_PROXY_HOST
+              value: pipeline.z-script.io
+
+            # JVM tuning
             - name: NIFI_JVM_HEAP_INIT
               value: "1g"
             - name: NIFI_JVM_HEAP_MAX
@@ -48,25 +48,29 @@ spec:
 
           resources:
             requests:
-              memory: "2Gi"
               cpu: "500m"
+              memory: "2Gi"
             limits:
-              memory: "4Gi"
               cpu: "1"
+              memory: "4Gi"
 
           volumeMounts:
             - name: nifi-data
               mountPath: /opt/nifi/nifi-current/data
 
+          # ---------------------------
+          # PROBES (IMPORTANT FIX)
+          # ---------------------------
 
           startupProbe:
             httpGet:
               path: /nifi-api/access/config
               port: 8443
               scheme: HTTPS
+            initialDelaySeconds: 120
             periodSeconds: 10
             failureThreshold: 30
-
+            timeoutSeconds: 5
 
           readinessProbe:
             httpGet:
@@ -75,8 +79,8 @@ spec:
               scheme: HTTPS
             initialDelaySeconds: 120
             periodSeconds: 15
-            timeoutSeconds: 5
             failureThreshold: 10
+            timeoutSeconds: 5
 
           livenessProbe:
             httpGet:
@@ -85,10 +89,16 @@ spec:
               scheme: HTTPS
             initialDelaySeconds: 240
             periodSeconds: 20
-            timeoutSeconds: 5
             failureThreshold: 5
+            timeoutSeconds: 5
 
       volumes:
         - name: nifi-data
           persistentVolumeClaim:
             claimName: nifi-data
+
+      # ---------------------------
+      # FUTURE NETWORK POLICY HOOK
+      # ---------------------------
+      # labels already include:
+      # access: internal
