@@ -37,10 +37,6 @@ spec:
               containerPort: 8443
 
           env:
-            # INTERNAL (for Kubernetes probes)
-            - name: NIFI_WEB_HTTP_PORT
-              value: "8080"
-
             # EXTERNAL (for ingress / cloudflare)
             - name: NIFI_WEB_HTTPS_PORT
               value: "8443"
@@ -62,35 +58,31 @@ spec:
             - name: nifi-data
               mountPath: /opt/nifi/nifi-current/data
 
-          # =========================
-          # STARTUP PROBE (HTTP ONLY)
-          # =========================
+
           startupProbe:
             httpGet:
               path: /nifi-api/access/config
-              port: 8080
+              port: 8443
+              scheme: HTTPS
             periodSeconds: 10
             failureThreshold: 30
 
-          # =========================
-          # READINESS PROBE
-          # =========================
+
           readinessProbe:
             httpGet:
               path: /nifi-api/access/config
-              port: 8080
+              port: 8443
+              scheme: HTTPS
             initialDelaySeconds: 120
             periodSeconds: 15
             timeoutSeconds: 5
             failureThreshold: 10
 
-          # =========================
-          # LIVENESS PROBE
-          # =========================
           livenessProbe:
             httpGet:
               path: /nifi-api/access/config
-              port: 8080
+              port: 8443
+              scheme: HTTPS
             initialDelaySeconds: 240
             periodSeconds: 20
             timeoutSeconds: 5
