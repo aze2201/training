@@ -5,16 +5,14 @@ metadata:
   namespace: nifi
   annotations:
     kubernetes.io/ingress.class: nginx
-    # IMPORTANT: NiFi backend is HTTPS
     nginx.ingress.kubernetes.io/backend-protocol: "HTTPS"
-    # avoid redirect loops
     nginx.ingress.kubernetes.io/ssl-redirect: "true"
 spec:
   ingressClassName: nginx
   tls:
     - hosts:
         - pipeline.z-script.io
-      secretName: nifi-tls-secret   # or your Cloudflare setup
+      secretName: nifi-tls-secret
   rules:
     - host: pipeline.z-script.io
       http:
