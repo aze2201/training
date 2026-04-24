@@ -90,8 +90,16 @@ spec:
               echo "Copying rendered config..."
               cp /opt/nifi/custom-conf/nifi.properties /opt/nifi/nifi-current/conf/nifi.properties
           
-              echo "Starting NiFi in foreground..."
-              /opt/nifi/nifi-current/bin/nifi.sh run
+              echo "Starting NiFi..."
+              /opt/nifi/nifi-current/bin/nifi.sh run &
+          
+              echo "Waiting for NiFi logs..."
+              while [ ! -f /opt/nifi/nifi-current/logs/nifi-app.log ]; do
+                sleep 2
+              done
+          
+              echo "Tailing logs..."
+              tail -F /opt/nifi/nifi-current/logs/nifi-app.log
           resources:
             requests:
               cpu: "500m"
