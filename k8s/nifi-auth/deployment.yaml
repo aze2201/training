@@ -21,31 +21,23 @@ spec:
         app: nifi
         component: dataflow
         tier: backend
-        access: internal
 
     spec:
-      containers:
-        - name: nifi
-          image: apache/nifi:latest
-
-          ports:
-            - containerPort: 8443
+      # -----------------------
+      # INIT CONTAINER (NEW)
+      # -----------------------
+      initContainers:
+        - name: render-nifi-config
+          image: alpine:3.20
+          command:
+            - /bin/sh
+            - -c
+            - |
+              apk add --no-cache gettext
+              echo "Rendering nifi.properties..."
+              envsubst < /config/nifi.properties.tpl > /rendered/nifi.properties
 
           env:
-            # HTTPS
-            - name: NIFI_WEB_HTTPS_PORT
-              value: "8443"
-
-            - name: NIFI_WEB_PROXY_HOST
-              value: pipeline.z-script.io
-
-            # Heap
-            - name: NIFI_JVM_HEAP_INIT
-              value: "1g"
-            - name: NIFI_JVM_HEAP_MAX
-              value: "2g"
-
-            # OIDC CONFIG FROM CONFIGMAP
             - name: OIDC_CLIENT_ID
               valueFrom:
                 configMapKeyRef:
@@ -58,18 +50,41 @@ spec:
                   name: nifi-oidc-config
                   key: OIDC_DISCOVERY_URL
 
-            - name: NIFI_EXTERNAL_URL
-              valueFrom:
-                configMapKeyRef:
-                  name: nifi-oidc-config
-                  key: NIFI_EXTERNAL_URL
-
-            # SECRET
             - name: OIDC_CLIENT_SECRET
               valueFrom:
                 secretKeyRef:
                   name: nifi-oidc-secret
                   key: OIDC_CLIENT_SECRET
+
+            - name: NIFI_WEB_PROXY_HOST
+              value: pipeline.z-script.io
+
+          volumeMounts:
+            - name: nifi-config
+              mountPath: /config
+
+            - name: rendered-config
+              mountPath: /rendered
+
+      containers:
+        - name: nifi
+          image: apache/nifi:1.26.0
+
+          ports:
+            - containerPort: 8443
+
+          env:
+            - name: NIFI_WEB_HTTPS_PORT
+              value: "8443"
+
+            - name: NIFI_WEB_PROXY_HOST
+              value: pipeline.z-script.io
+
+            - name: NIFI_JVM_HEAP_INIT
+              value: "1g"
+
+            - name: NIFI_JVM_HEAP_MAX
+              value: "2g"
 
           resources:
             requests:
@@ -83,16 +98,10 @@ spec:
             - name: nifi-data
               mountPath: /opt/nifi/nifi-current/data
 
-            # template mount
-            - name: nifi-config
-              mountPath: /opt/nifi/conf
-
-            # override startup script
-            - name: start-script
-              mountPath: /start-nifi.sh
-              subPath: start-nifi.sh
-
-          command: ["/bin/bash", "/start-nifi.sh"]
+            # 👉 rendered config mounted as real nifi.properties
+            - name: rendered-config
+              mountPath: /opt/nifi/nifi-current/conf/nifi.properties
+              subPath: nifi.properties
 
           startupProbe:
             tcpSocket:
@@ -120,13 +129,9 @@ spec:
           persistentVolumeClaim:
             claimName: nifi-data
 
-        # mount template directory
         - name: nifi-config
           configMap:
             name: nifi-config-map
 
-        # startup script
-        - name: start-script
-          configMap:
-            name: nifi-start-script
-            defaultMode: 0755
+        - name: rendered-config
+          emptyDir: {}
