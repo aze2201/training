@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: nifi-oidc-config
+  namespace: nifi
+data:
+  OIDC_CLIENT_ID: "nifi"
+
+  # Keycloak issuer
+  OIDC_DISCOVERY_URL: "https://auth.z-script.io/realms/iot/.well-known/openid-configuration"
+
+  # NiFi external URL 
+  NIFI_EXTERNAL_URL: "https://pipeline.z-script.io"
