@@ -33,8 +33,7 @@ spec:
               apk add --no-cache gettext
               echo "Rendering nifi.properties..."
               envsubst < /config/nifi.properties.tpl > /rendered/nifi.properties
-              cat /config/login-identity-providers.tpl > /rendered/login-identity-providers.xml
-
+              envsubst < /config/login-identity-providers.tpl > /rendered/login-identity-providers.xml
           env:
             - name: OIDC_CLIENT_ID
               valueFrom:
