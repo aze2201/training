@@ -3,6 +3,7 @@ kind: ConfigMap
 metadata:
   name: nifi-config-map
   namespace: nifi
+
 data:
   nifi.properties.tpl: |
     nifi.web.https.port=8443
@@ -11,3 +12,6 @@ data:
     nifi.security.user.oidc.discovery.url=${OIDC_DISCOVERY_URL}
     nifi.security.user.oidc.client.id=${OIDC_CLIENT_ID}
     nifi.security.user.oidc.client.secret=${OIDC_CLIENT_SECRET}
+
+    nifi.security.user.oidc.claim.identifying.user=preferred_username
+    nifi.security.user.oidc.additional.scopes=openid,email,profile
