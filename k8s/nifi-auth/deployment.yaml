@@ -23,9 +23,6 @@ spec:
         tier: backend
 
     spec:
-      # -----------------------
-      # INIT CONTAINER (NEW)
-      # -----------------------
       initContainers:
         - name: render-nifi-config
           image: alpine:3.20
@@ -86,6 +83,15 @@ spec:
             - name: NIFI_JVM_HEAP_MAX
               value: "2g"
 
+          command:
+            - /bin/bash
+            - -c
+            - |
+              echo "Copying rendered config..."
+              cp /opt/nifi/custom-conf/nifi.properties /opt/nifi/nifi-current/conf/nifi.properties
+              echo "Starting NiFi..."
+              exec /opt/nifi/nifi-current/bin/nifi.sh run
+
           resources:
             requests:
               cpu: "500m"
@@ -98,10 +104,8 @@ spec:
             - name: nifi-data
               mountPath: /opt/nifi/nifi-current/data
 
-            # 👉 rendered config mounted as real nifi.properties
             - name: rendered-config
-              mountPath: /opt/nifi/nifi-current/conf/nifi.properties
-              subPath: nifi.properties
+              mountPath: /opt/nifi/custom-conf
 
           startupProbe:
             tcpSocket:
