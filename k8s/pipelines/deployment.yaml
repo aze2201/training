@@ -19,26 +19,21 @@ spec:
         app: nifi
         component: dataflow
         tier: backend
-        access: internal   # for future NetworkPolicy
+        access: internal
     spec:
       containers:
         - name: nifi
           image: apache/nifi:latest
 
           ports:
-            - containerPort: 8080
             - containerPort: 8443
 
           env:
-            # --- INTERNAL HTTP (for probes ONLY) ---
-            - name: NIFI_WEB_HTTP_PORT
-              value: "8080"
-
-            # --- EXTERNAL HTTPS ---
+            # HTTPS ONLY
             - name: NIFI_WEB_HTTPS_PORT
               value: "8443"
 
-            # REQUIRED for ingress / SNI
+            # Required for ingress / reverse proxy
             - name: NIFI_WEB_PROXY_HOST
               value: pipeline.z-script.io
 
@@ -61,34 +56,28 @@ spec:
               mountPath: /opt/nifi/nifi-current/data
 
           # ---------------------------
-          # PROBES (HTTP ONLY!)
+          # PROBES (FIXED → TCP 8443)
           # ---------------------------
           startupProbe:
-            httpGet:
-              path: /nifi-api/access/config
-              port: 8080
+            tcpSocket:
+              port: 8443
             initialDelaySeconds: 120
             periodSeconds: 10
             failureThreshold: 30
-            timeoutSeconds: 5
 
           readinessProbe:
-            httpGet:
-              path: /nifi-api/access/config
-              port: 8080
+            tcpSocket:
+              port: 8443
             initialDelaySeconds: 120
             periodSeconds: 15
             failureThreshold: 10
-            timeoutSeconds: 5
 
           livenessProbe:
-            httpGet:
-              path: /nifi-api/access/config
-              port: 8080
+            tcpSocket:
+              port: 8443
             initialDelaySeconds: 240
             periodSeconds: 20
             failureThreshold: 5
-            timeoutSeconds: 5
 
       volumes:
         - name: nifi-data
