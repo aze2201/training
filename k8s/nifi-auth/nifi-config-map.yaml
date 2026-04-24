@@ -15,3 +15,8 @@ data:
 
     nifi.security.user.oidc.claim.identifying.user=preferred_username
     nifi.security.user.oidc.additional.scopes=openid,email,profile
+	
+	nifi.sensitive.props.key=${PROPS_KEY}
+	nifi.security.keystorePasswd=${KEYSTORE_PASSWORD}
+	nifi.security.keyPasswd=${KEY_PASSWORD}
+	nifi.security.truststorePasswd=${TRUSTSTORE_PASSWORD}
