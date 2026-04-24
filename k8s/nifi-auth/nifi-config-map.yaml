@@ -179,7 +179,7 @@ data:
     nifi.web.jetty.threads=200
     nifi.web.max.header.size=16 KB
     nifi.web.proxy.context.path=/nifi
-    nifi.web.proxy.host=pipeline.z-script.io:443
+    nifi.web.proxy.host=pipeline.z-script.io
     nifi.web.max.content.size=
     nifi.web.max.requests.per.second=30000
     nifi.web.max.access.token.requests.per.second=25
