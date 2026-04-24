@@ -90,6 +90,7 @@ spec:
             - |
               echo "Copying rendered config..."
               cp /opt/nifi/custom-conf/nifi.properties /opt/nifi/nifi-current/conf/nifi.properties
+              cp /opt/nifi/custom-conf/login-identity-providers.xml /opt/nifi/nifi-current/conf/login-identity-providers.xml
           
               echo "Starting NiFi..."
               /opt/nifi/nifi-current/bin/nifi.sh run &
