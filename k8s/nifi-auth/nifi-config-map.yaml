@@ -231,7 +231,7 @@ data:
     nifi.security.keystore=./conf/keystore.p12
     nifi.security.keystore.certificate=
     nifi.security.keystore.privateKey=
-    nifi.security.keystoreType=PKCS12
+    nifi.security.keystoreType=JKS
     nifi.security.keystorePasswd=${KEYSTORE_PASSWORD}
     nifi.security.keyPasswd=${KEY_PASSWORD}
     nifi.security.truststore=./conf/truststore.p12
