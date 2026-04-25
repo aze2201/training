@@ -23,7 +23,13 @@ data:
           <property name="Initial Admin Identity">admin</property>
           <property name="Legacy Authorized Users File"></property>
           <property name="Node Identity 1"></property>
+          <property name="Node Group"></property>
       </accessPolicyProvider>
+      <authorizer>
+        <identifier>managed-authorizer</identifier>
+        <class>org.apache.nifi.authorization.StandardManagedAuthorizer</class>
+        <property name="Access Policy Provider">file-access-policy-provider</property>
+      </authorizer>
     </authorizers>
   nifi.properties.tpl: |
     # Licensed to the Apache Software Foundation (ASF) under one or more
@@ -233,7 +239,7 @@ data:
     nifi.security.truststoreType=PKCS12
     nifi.security.truststorePasswd=${TRUSTSTORE_PASSWORD}
     
-    nifi.security.user.authorizer=
+    nifi.security.user.authorizer=managed-authorizer
     nifi.security.allow.anonymous.authentication=false
     nifi.security.user.login.identity.provider=
     nifi.security.user.jws.key.rotation.period=PT1H
@@ -251,7 +257,42 @@ data:
     nifi.security.user.oidc.claim.groups=groups
     nifi.security.user.oidc.truststore.strategy=JDK
     nifi.security.user.oidc.token.refresh.window=60 secs
-
+    
+    # SAML Properties #
+    nifi.security.user.saml.idp.metadata.url=
+    nifi.security.user.saml.sp.entity.id=
+    nifi.security.user.saml.identity.attribute.name=
+    nifi.security.user.saml.group.attribute.name=
+    nifi.security.user.saml.request.signing.enabled=false
+    nifi.security.user.saml.want.assertions.signed=true
+    nifi.security.user.saml.signature.algorithm=http://www.w3.org/2001/04/xmldsig-more#rsa-sha256
+    nifi.security.user.saml.authentication.expiration=12 hours
+    nifi.security.user.saml.single.logout.enabled=false
+    nifi.security.user.saml.http.client.truststore.strategy=JDK
+    nifi.security.user.saml.http.client.connect.timeout=30 secs
+    nifi.security.user.saml.http.client.read.timeout=30 secs
+    
+    # Identity Mapping Properties #
+    # These properties allow normalizing user identities such that identities coming from different identity providers
+    # (certificates, LDAP, Kerberos) can be treated the same internally in NiFi. The following example demonstrates normalizing
+    # DNs from certificates and principals from Kerberos into a common identity string:
+    #
+    # nifi.security.identity.mapping.pattern.dn=^CN=(.*?), OU=(.*?), O=(.*?), L=(.*?), ST=(.*?), C=(.*?)$
+    # nifi.security.identity.mapping.value.dn=$1@$2
+    # nifi.security.identity.mapping.transform.dn=NONE
+    # nifi.security.identity.mapping.pattern.kerb=^(.*?)/instance@(.*?)$
+    # nifi.security.identity.mapping.value.kerb=$1@$2
+    # nifi.security.identity.mapping.transform.kerb=UPPER
+    
+    # Group Mapping Properties #
+    # These properties allow normalizing group names coming from external sources like LDAP. The following example
+    # lowercases any group name.
+    #
+    # nifi.security.group.mapping.pattern.anygroup=^(.*)$
+    # nifi.security.group.mapping.value.anygroup=$1
+    # nifi.security.group.mapping.transform.anygroup=LOWER
+    
+    # cluster common properties (all nodes must have same values) #
     nifi.cluster.protocol.heartbeat.interval=5 sec
     nifi.cluster.protocol.heartbeat.missable.max=8
     
