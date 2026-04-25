@@ -255,7 +255,7 @@ data:
     nifi.security.user.oidc.claim.identifying.user=preferred_username
     nifi.security.user.oidc.fallback.claims.identifying.user=
     nifi.security.user.oidc.claim.groups=groups
-    nifi.security.user.oidc.truststore.strategy=JDK
+    nifi.security.user.oidc.truststore.strategy=NIFI
     nifi.security.user.oidc.token.refresh.window=60 secs
     
     # SAML Properties #
