@@ -424,6 +424,7 @@ data:
           <property name="Redirect URI">https://pipeline.z-script.io/nifi-api/access/oidc/callback</property>
 
           <property name="Preferred JWS Algorithm">RS256</property>
+          <property name="Claim Identifying User">preferred_username</property>
           <property name="Additional Scopes">openid,email,profile</property>
         </provider> 
     </loginIdentityProviders>
