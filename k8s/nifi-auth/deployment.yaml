@@ -110,6 +110,29 @@ spec:
               openssl s_client -connect auth.z-script.io:443 -showcerts 2>/dev/null </dev/null | awk '/BEGIN CERTIFICATE/,/END CERTIFICATE/{ print }' > /tmp/keycloak-chain.pem
               keytool -import -alias keycloak-chain   -file /tmp/keycloak-chain.pem   -keystore ./conf/truststore.p12   -storetype PKCS12   -storepass ${password}    -noprompt
               /opt/nifi/nifi-current/bin/nifi.sh run &
+              
+              echo Waiting for NiFi to generate truststore...
+              while [ ! -f /opt/nifi/nifi-current/conf/truststore.p12 ]; do
+               echo Waiting for truststore...
+               sleep 5
+              done
+              sleep 10
+
+             echo Importing Keycloak cert chain...
+             password=$(cat conf/nifi.properties | grep nifi.security.truststorePasswd | awk -v FS='=' '{print $2}')
+             echo  password is ${password}
+
+             openssl s_client -connect auth.z-script.io:443 -showcerts 2>/dev/null </dev/null | \
+                   awk '/BEGIN CERTIFICATE/,/END CERTIFICATE/{ print }' > /tmp/keycloak-chain.pem
+
+             keytool -import -alias keycloak-chain \
+               -file /tmp/keycloak-chain.pem \
+               -keystore /opt/nifi/nifi-current/conf/truststore.p12 \
+               -storetype PKCS12 \
+               -storepass ${password} \
+               -noprompt
+               
+              echo result cert $?
           
               echo "Waiting for NiFi logs..."
               while [ ! -f /opt/nifi/nifi-current/logs/nifi-app.log ]; do
