@@ -53,6 +53,18 @@ spec:
                   name: nifi-oidc-secret
                   key: OIDC_CLIENT_SECRET
 
+            - name: SINGLE_USER_CREDENTIALS_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: nifi-oidc-secret
+                  key: SINGLE_USER_CREDENTIALS_USERNAME
+                  
+            - name: SINGLE_USER_CREDENTIALS_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: nifi-oidc-secret
+                  key: SINGLE_USER_CREDENTIALS_USERNAME
+
             - name: NIFI_WEB_PROXY_HOST
               value: pipeline.z-script.io
 
