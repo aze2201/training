@@ -241,7 +241,7 @@ data:
     
     nifi.security.user.authorizer=managed-authorizer
     nifi.security.allow.anonymous.authentication=false
-    nifi.security.user.login.identity.provider=oidc-provider
+    nifi.security.user.login.identity.provider=
     nifi.security.user.jws.key.rotation.period=PT1H
     
     # OpenId Connect SSO Properties #
@@ -410,20 +410,4 @@ data:
     # Example NiFi Registry NAR Provider:
     #   nifi.nar.library.provider.nifi-registry.implementation=org.apache.nifi.registry.extension.NiFiRegistryExternalResourceProvider
     #   nifi.nar.library.provider.nifi-registry.url=http://localhost:18080/nifi-registry-api
-  login-identity-providers.tpl: |
-    <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-    <loginIdentityProviders>
-        <provider>
-          <identifier>oidc-provider</identifier>
-          <class>org.apache.nifi.oauth2.OidcIdentityProvider</class>
 
-          <property name="Discovery URL">${OIDC_DISCOVERY_URL}</property>
-          <property name="Client ID">${OIDC_CLIENT_ID}</property>
-          <property name="Client Secret">${OIDC_CLIENT_SECRET}</property>
-          <property name="Redirect URI">https://pipeline.z-script.io/nifi-api/access/oidc/callback</property>
-
-          <property name="Preferred JWS Algorithm">RS256</property>
-          <property name="Claim Identifying User">preferred_username</property>
-          <property name="Additional Scopes">openid,email,profile</property>
-        </provider> 
-    </loginIdentityProviders>
