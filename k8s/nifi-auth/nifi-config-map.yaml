@@ -241,7 +241,7 @@ data:
     nifi.security.user.authorizer=managed-authorizer
     nifi.security.allow.anonymous.authentication=false
     nifi.security.user.login.identity.provider=
-    nifi.security.user.jws.key.rotation.period=1 hour
+    nifi.security.user.jws.key.rotation.period=PT1H
     
     # OpenId Connect SSO Properties #
     nifi.security.user.oidc.discovery.url=${OIDC_DISCOVERY_URL}
