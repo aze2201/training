@@ -241,7 +241,7 @@ data:
     
     nifi.security.user.authorizer=managed-authorizer
     nifi.security.allow.anonymous.authentication=false
-    nifi.security.user.login.identity.provider=
+    nifi.security.user.login.identity.provider=oidc-provider
     nifi.security.user.jws.key.rotation.period=PT1H
     
     # OpenId Connect SSO Properties #
@@ -413,7 +413,6 @@ data:
   login-identity-providers.tpl: |
     <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
     <loginIdentityProviders>
-        <!-- To enable the ldap-provider remove 2 lines. This is 1 of 2.
         <provider>
           <identifier>oidc-provider</identifier>
           <class>org.apache.nifi.oauth2.OidcIdentityProvider</class>
