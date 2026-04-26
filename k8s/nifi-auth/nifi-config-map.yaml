@@ -9,18 +9,18 @@ data:
     <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
     <authorizers>
     <userGroupProvider>
-       <identifier>file-user-group-provider</identifier>
-       <class>org.apache.nifi.authorization.FileUserGroupProvider</class>
-       <property name="Users File">./conf/users.xml</property>
-       <property name="Legacy Authorized Users File"></property>
-       <property name="Initial User Identity 1">admin</property>
+        <identifier>file-user-group-provider</identifier>
+        <class>org.apache.nifi.authorization.FileUserGroupProvider</class>
+        <property name="Users File">./conf/users.xml</property>
+        <property name="Legacy Authorized Users File"></property>
+        <property name="Initial User Identity 1">ronald</property>
     </userGroupProvider>
     <accessPolicyProvider>
         <identifier>file-access-policy-provider</identifier>
         <class>org.apache.nifi.authorization.FileAccessPolicyProvider</class>
         <property name="User Group Provider">file-user-group-provider</property>
         <property name="Authorizations File">./conf/authorizations.xml</property>
-        <property name="Initial Admin Identity">admin</property>
+        <property name="Initial Admin Identity">ronald</property>
         <property name="Legacy Authorized Users File"></property>
         <property name="Node Identity 1"></property>
     </accessPolicyProvider>
@@ -29,6 +29,7 @@ data:
         <class>org.apache.nifi.authorization.StandardManagedAuthorizer</class>
         <property name="Access Policy Provider">file-access-policy-provider</property>
     </authorizer>
+  </authorizers>
   nifi.properties.tpl: |
     # Licensed to the Apache Software Foundation (ASF) under one or more
     # contributor license agreements.  See the NOTICE file distributed with
@@ -202,7 +203,7 @@ data:
     nifi.web.jetty.working.directory=./work/jetty
     nifi.web.jetty.threads=200
     nifi.web.max.header.size=16 KB
-    nifi.web.proxy.context.path=
+    nifi.web.proxy.context.path=/nifi
     nifi.web.proxy.host=pipeline.z-script.io
     nifi.web.max.content.size=
     nifi.web.max.requests.per.second=30000
@@ -210,7 +211,7 @@ data:
     nifi.web.request.timeout=60 secs
     nifi.web.request.ip.whitelist=
     nifi.web.should.send.server.version=true
-    nifi.web.proxy.forward.headers.strategy=NATIVE
+    nifi.web.proxy.forward.headers.strategy=WEB_CONTEXT_SERVICE
     nifi.web.request.log.format=%{client}a - %u %t "%r" %s %O "%{Referer}i" "%{User-Agent}i"
     
     # Filter JMX MBeans available through the System Diagnostics REST API
@@ -229,7 +230,7 @@ data:
     nifi.security.keystore=./conf/keystore.p12
     nifi.security.keystore.certificate=
     nifi.security.keystore.privateKey=
-    nifi.security.keystoreType=JKS
+    nifi.security.keystoreType=PKCS12
     nifi.security.keystorePasswd=${KEYSTORE_PASSWORD}
     nifi.security.keyPasswd=${KEY_PASSWORD}
     nifi.security.truststore=./conf/truststore.p12
@@ -297,7 +298,7 @@ data:
     # cluster node properties (only configure for cluster nodes) #
     nifi.cluster.is.node=false
     nifi.cluster.leader.election.implementation=CuratorLeaderElectionManager
-    nifi.cluster.node.address=
+    nifi.cluster.node.address=nifi-558457949b-jbc87
     nifi.cluster.node.protocol.port=
     nifi.cluster.node.protocol.max.threads=50
     nifi.cluster.node.event.history.size=25
@@ -411,4 +412,18 @@ data:
   login-identity-providers.tpl: |
     <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
     <loginIdentityProviders>
+        <!-- To enable the ldap-provider remove 2 lines. This is 1 of 2.
+        <provider>
+          <identifier>oidc-provider</identifier>
+          <class>org.apache.nifi.oauth2.OidcIdentityProvider</class>
+
+          <property name="Discovery URL">${OIDC_DISCOVERY_URL}</property>
+          <property name="Client ID">${OIDC_CLIENT_ID}</property>
+          <property name="Client Secret">${OIDC_CLIENT_SECRET}</property>
+          <property name="Redirect URI">https://pipeline.z-script.io/nifi-api/access/oidc/callback</property>
+
+          <property name="Preferred JWS Algorithm">RS256</property>
+          <property name="Claim Identifying User">preferred_username</property>
+          <property name="Additional Scopes">openid,email,profile</property>
+        </provider> 
     </loginIdentityProviders>
