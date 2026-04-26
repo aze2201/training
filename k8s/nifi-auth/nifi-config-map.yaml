@@ -13,18 +13,23 @@ data:
           <class>org.apache.nifi.authorization.FileUserGroupProvider</class>
           <property name="Users File">./conf/users.xml</property>
           <property name="Legacy Authorized Users File"></property>
-          <property name="Initial User Identity 1">fariz</property>
+          <property name="Initial User Identity 1">admin</property>
         </userGroupProvider>
       <accessPolicyProvider>
           <identifier>file-access-policy-provider</identifier>
           <class>org.apache.nifi.authorization.FileAccessPolicyProvider</class>
           <property name="User Group Provider">file-user-group-provider</property>
           <property name="Authorizations File">./conf/authorizations.xml</property>
-          <property name="Initial Admin Identity">fariz</property>
+          <property name="Initial Admin Identity">admin</property>
           <property name="Legacy Authorized Users File"></property>
           <property name="Node Identity 1"></property>
           <property name="Node Group"></property>
       </accessPolicyProvider>
+      <authorizer>
+        <identifier>managed-authorizer</identifier>
+        <class>org.apache.nifi.authorization.StandardManagedAuthorizer</class>
+        <property name="Access Policy Provider">file-access-policy-provider</property>
+      </authorizer>
     </authorizers>
   nifi.properties.tpl: |
     
@@ -220,7 +225,7 @@ data:
     nifi.security.truststoreType=PKCS12
     nifi.security.truststorePasswd=${TRUSTSTORE_PASSWORD}
     
-    nifi.security.user.authorizer=
+    nifi.security.user.authorizer=managed-authorizer
     nifi.security.allow.anonymous.authentication=false
     nifi.security.user.login.identity.provider=
     nifi.security.user.jws.key.rotation.period=PT1H
@@ -238,6 +243,96 @@ data:
     nifi.security.user.oidc.claim.groups=groups
     nifi.security.user.oidc.truststore.strategy=JDK
     nifi.security.user.oidc.token.refresh.window=60 secs
+    
+    # SAML Properties #
+    nifi.security.user.saml.idp.metadata.url=
+    nifi.security.user.saml.sp.entity.id=
+    nifi.security.user.saml.identity.attribute.name=
+    nifi.security.user.saml.group.attribute.name=
+    nifi.security.user.saml.request.signing.enabled=false
+    nifi.security.user.saml.want.assertions.signed=true
+    nifi.security.user.saml.signature.algorithm=http://www.w3.org/2001/04/xmldsig-more#rsa-sha256
+    nifi.security.user.saml.authentication.expiration=12 hours
+    nifi.security.user.saml.single.logout.enabled=false
+    nifi.security.user.saml.http.client.truststore.strategy=JDK
+    nifi.security.user.saml.http.client.connect.timeout=30 secs
+    nifi.security.user.saml.http.client.read.timeout=30 secs
+    
+    # Identity Mapping Properties #
+    # These properties allow normalizing user identities such that identities coming from different identity providers
+    # (certificates, LDAP, Kerberos) can be treated the same internally in NiFi. The following example demonstrates normalizing
+    # DNs from certificates and principals from Kerberos into a common identity string:
+    #
+    # nifi.security.identity.mapping.pattern.dn=^CN=(.*?), OU=(.*?), O=(.*?), L=(.*?), ST=(.*?), C=(.*?)$
+    # nifi.security.identity.mapping.value.dn=$1@$2
+    # nifi.security.identity.mapping.transform.dn=NONE
+    # nifi.security.identity.mapping.pattern.kerb=^(.*?)/instance@(.*?)$
+    # nifi.security.identity.mapping.value.kerb=$1@$2
+    # nifi.security.identity.mapping.transform.kerb=UPPER
+    
+    # Group Mapping Properties #
+    # These properties allow normalizing group names coming from external sources like LDAP. The following example
+    # lowercases any group name.
+    #
+    # nifi.security.group.mapping.pattern.anygroup=^(.*)$
+    # nifi.security.group.mapping.value.anygroup=$1
+    # nifi.security.group.mapping.transform.anygroup=LOWER
+    
+    # cluster common properties (all nodes must have same values) #
+    nifi.cluster.protocol.heartbeat.interval=5 sec
+    nifi.cluster.protocol.heartbeat.missable.max=8
+    
+    # cluster node properties (only configure for cluster nodes) #
+    nifi.cluster.is.node=false
+    nifi.cluster.leader.election.implementation=CuratorLeaderElectionManager
+    nifi.cluster.node.address=nifi-558457949b-jbc87
+    nifi.cluster.node.protocol.port=
+    nifi.cluster.node.protocol.max.threads=50
+    nifi.cluster.node.event.history.size=25
+    nifi.cluster.node.connection.timeout=5 sec
+    nifi.cluster.node.read.timeout=5 sec
+    nifi.cluster.node.max.concurrent.requests=100
+    nifi.cluster.firewall.file=
+    nifi.cluster.flow.election.max.wait.time=5 mins
+    nifi.cluster.flow.election.max.candidates=
+    
+    # cluster load balancing properties #
+    nifi.cluster.load.balance.host=
+    nifi.cluster.load.balance.port=6342
+    nifi.cluster.load.balance.connections.per.node=1
+    nifi.cluster.load.balance.max.thread.count=8
+    nifi.cluster.load.balance.comms.timeout=30 sec
+    
+    # zookeeper properties, used for cluster management #
+    nifi.zookeeper.connect.string=
+    nifi.zookeeper.connect.timeout=10 secs
+    nifi.zookeeper.session.timeout=10 secs
+    nifi.zookeeper.root.node=/nifi
+    nifi.zookeeper.client.secure=false
+    nifi.zookeeper.security.keystore=
+    nifi.zookeeper.security.keystoreType=
+    nifi.zookeeper.security.keystorePasswd=
+    nifi.zookeeper.security.truststore=
+    nifi.zookeeper.security.truststoreType=
+    nifi.zookeeper.security.truststorePasswd=
+    nifi.zookeeper.jute.maxbuffer=
+    
+    # Zookeeper properties for the authentication scheme used when creating acls on znodes used for cluster management
+    # Values supported for nifi.zookeeper.auth.type are "default", which will apply world/anyone rights on znodes
+    # and "sasl" which will give rights to the sasl/kerberos identity used to authenticate the nifi node
+    # The identity is determined using the value in nifi.kerberos.service.principal and the removeHostFromPrincipal
+    # and removeRealmFromPrincipal values (which should align with the kerberos.removeHostFromPrincipal and kerberos.removeRealmFromPrincipal
+    # values configured on the zookeeper server).
+    nifi.zookeeper.auth.type=
+    nifi.zookeeper.kerberos.removeHostFromPrincipal=
+    nifi.zookeeper.kerberos.removeRealmFromPrincipal=
+    
+    # kerberos #
+    nifi.kerberos.krb5.file=
+    
+    # kerberos service principal #
+    nifi.kerberos.service.principal=
+    nifi.kerberos.service.keytab.location=
     
     # analytics properties #
     nifi.analytics.predict.enabled=false
@@ -272,5 +367,49 @@ data:
     # The diagnostics folder's maximum permitted size in bytes. If the limit is exceeded, the oldest files are deleted.
     nifi.diagnostics.on.shutdown.max.directory.size=10 MB
     
+    # Performance tracking properties
+    ## Specifies what percentage of the time we should track the amount of time processors are using CPU, reading from/writing to content repo, etc.
+    ## This can be useful to understand which components are the most expensive and to understand where system bottlenecks may be occurring.
+    ## The value must be in the range of 0 (inclusive) to 100 (inclusive). A larger value will produce more accurate results, while a smaller value may be
+    ## less expensive to compute.
+    ## Results can be obtained by running "nifi.sh diagnostics <filename>" and then inspecting the produced file.
     nifi.performance.tracking.percentage=0
     
+    # NAR Provider Properties #
+    # These properties allow configuring one or more NAR providers. A NAR provider retrieves NARs from an external source
+    # and copies them to the directory specified by nifi.nar.library.autoload.directory.
+    #
+    # Each NAR provider property follows the format:
+    #  nifi.nar.library.provider.<identifier>.<property-name>
+    #
+    # Each NAR provider must have at least one property named "implementation".
+    #
+    # Example HDFS NAR Provider:
+    #   nifi.nar.library.provider.hdfs.implementation=org.apache.nifi.flow.resource.hadoop.HDFSExternalResourceProvider
+    #   nifi.nar.library.provider.hdfs.resources=/path/to/core-site.xml,/path/to/hdfs-site.xml
+    #   nifi.nar.library.provider.hdfs.storage.location=hdfs://hdfs-location
+    #   nifi.nar.library.provider.hdfs.source.directory=/nars
+    #   nifi.nar.library.provider.hdfs.kerberos.principal=nifi@NIFI.COM
+    #   nifi.nar.library.provider.hdfs.kerberos.keytab=/path/to/nifi.keytab
+    #   nifi.nar.library.provider.hdfs.kerberos.password=
+    #
+    # Example NiFi Registry NAR Provider:
+    #   nifi.nar.library.provider.nifi-registry.implementation=org.apache.nifi.registry.extension.NiFiRegistryExternalResourceProvider
+    #   nifi.nar.library.provider.nifi-registry.url=http://localhost:18080/nifi-registry-api
+  login-identity-providers.tpl: |
+    <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+    <loginIdentityProviders>
+        <provider>
+          <identifier>oidc-provider</identifier>
+          <class>org.apache.nifi.oauth2.OidcIdentityProvider</class>
+
+          <property name="Discovery URL">${OIDC_DISCOVERY_URL}</property>
+          <property name="Client ID">${OIDC_CLIENT_ID}</property>
+          <property name="Client Secret">${OIDC_CLIENT_SECRET}</property>
+          <property name="Redirect URI">https://pipeline.z-script.io/nifi-api/access/oidc/callback</property>
+
+          <property name="Preferred JWS Algorithm">RS256</property>
+          <property name="Claim Identifying User">preferred_username</property>
+          <property name="Additional Scopes">openid,email,profile</property>
+        </provider> 
+    </loginIdentityProviders>
