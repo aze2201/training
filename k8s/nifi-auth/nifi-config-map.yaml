@@ -254,7 +254,7 @@ data:
     nifi.security.user.oidc.additional.scopes=openid,email,profile
     nifi.security.user.oidc.claim.identifying.user=preferred_username
     nifi.security.user.oidc.fallback.claims.identifying.user=
-    nifi.security.user.oidc.claim.groups=
+    nifi.security.user.oidc.claim.groups=groups
     nifi.security.user.oidc.truststore.strategy=JDK
     nifi.security.user.oidc.token.refresh.window=60 secs
     
@@ -412,19 +412,5 @@ data:
     #   nifi.nar.library.provider.nifi-registry.url=http://localhost:18080/nifi-registry-api
   login-identity-providers.tpl: |
     <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-    <loginIdentityProviders>
-        <!-- To enable the ldap-provider remove 2 lines. This is 1 of 2.
-        <provider>
-          <identifier>oidc-provider</identifier>
-          <class>org.apache.nifi.oauth2.OidcIdentityProvider</class>
-
-          <property name="Discovery URL">${OIDC_DISCOVERY_URL}</property>
-          <property name="Client ID">${OIDC_CLIENT_ID}</property>
-          <property name="Client Secret">${OIDC_CLIENT_SECRET}</property>
-          <property name="Redirect URI">https://pipeline.z-script.io/nifi-api/access/oidc/callback</property>
-
-          <property name="Preferred JWS Algorithm">RS256</property>
-          <property name="Claim Identifying User">preferred_username</property>
-          <property name="Additional Scopes">openid,email,profile</property>
-        </provider> 
-    </loginIdentityProviders>
+      <loginIdentityProviders>
+      </loginIdentityProviders>
