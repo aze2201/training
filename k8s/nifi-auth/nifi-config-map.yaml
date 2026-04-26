@@ -5,82 +5,271 @@ metadata:
   namespace: nifi
 
 data:
-
   authorizers.xml: |
     <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-    <authorizers>
-      <userGroupProvider>
-        <identifier>file-user-group-provider</identifier>
-        <class>org.apache.nifi.authorization.FileUserGroupProvider</class>
-        <property name="Users File">./conf/users.xml</property>
-        <property name="Initial User Identity 1">*</property>
-      </userGroupProvider>
-
+      <authorizers>
+        <userGroupProvider>
+          <identifier>file-user-group-provider</identifier>
+          <class>org.apache.nifi.authorization.FileUserGroupProvider</class>
+          <property name="Users File">./conf/users.xml</property>
+          <property name="Legacy Authorized Users File"></property>
+          <property name="Initial User Identity 1">fariz</property>
+        </userGroupProvider>
       <accessPolicyProvider>
-        <identifier>file-access-policy-provider</identifier>
-        <class>org.apache.nifi.authorization.FileAccessPolicyProvider</class>
-        <property name="User Group Provider">file-user-group-provider</property>
-        <property name="Authorizations File">./conf/authorizations.xml</property>
-        <property name="Initial Admin Identity">*</property>
+          <identifier>file-access-policy-provider</identifier>
+          <class>org.apache.nifi.authorization.FileAccessPolicyProvider</class>
+          <property name="User Group Provider">file-user-group-provider</property>
+          <property name="Authorizations File">./conf/authorizations.xml</property>
+          <property name="Initial Admin Identity">fariz</property>
+          <property name="Legacy Authorized Users File"></property>
+          <property name="Node Identity 1"></property>
+          <property name="Node Group"></property>
       </accessPolicyProvider>
-
-      <authorizer>
-        <identifier>managed-authorizer</identifier>
-        <class>org.apache.nifi.authorization.StandardManagedAuthorizer</class>
-        <property name="Access Policy Provider">file-access-policy-provider</property>
-      </authorizer>
-    </authorizers>
-
-
-  login-identity-providers.xml: |
-    <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-    <loginIdentityProviders>
-      <provider>
-        <identifier>oidc-provider</identifier>
-
-        <!-- ✅ CORRECT CLASS -->
-        <class>org.apache.nifi.web.security.oidc.OidcIdentityProvider</class>
-
-        <property name="Discovery URL">${OIDC_DISCOVERY_URL}</property>
-        <property name="Client ID">${OIDC_CLIENT_ID}</property>
-        <property name="Client Secret">${OIDC_CLIENT_SECRET}</property>
-
-        <!-- MUST match Keycloak EXACTLY -->
-        <property name="Redirect URI">https://pipeline.z-script.io/nifi-api/access/oidc/callback</property>
-
-        <property name="Preferred JWS Algorithm">RS256</property>
-        <property name="Claim Identifying User">preferred_username</property>
-        <property name="Additional Scopes">openid,email,profile</property>
-      </provider>
-    </loginIdentityProviders>
-
-
   nifi.properties.tpl: |
-    nifi.web.https.port=8443
-
-    nifi.security.user.authorizer=managed-authorizer
-    nifi.security.allow.anonymous.authentication=false
-
+    
+    # Core Properties #
+    nifi.flow.configuration.file=./conf/flow.json.gz
+    nifi.flow.configuration.archive.enabled=true
+    nifi.flow.configuration.archive.dir=./conf/archive/
+    nifi.flow.configuration.archive.max.time=30 days
+    nifi.flow.configuration.archive.max.storage=500 MB
+    nifi.flow.configuration.archive.max.count=
+    nifi.flowcontroller.autoResumeState=true
+    nifi.flowcontroller.graceful.shutdown.period=10 sec
+    nifi.flowcontroller.registry.sync.interval=30 min
+    nifi.flowservice.writedelay.interval=500 ms
+    nifi.administrative.yield.duration=30 sec
+    # If a component has no work to do (is "bored"), how long should we wait before checking again for work?
+    nifi.bored.yield.duration=10 millis
+    nifi.queue.backpressure.count=10000
+    nifi.queue.backpressure.size=1 GB
+    
+    nifi.authorizer.configuration.file=./conf/authorizers.xml
     nifi.login.identity.provider.configuration.file=./conf/login-identity-providers.xml
-    nifi.security.user.login.identity.provider=oidc-provider
-
-    # OIDC settings
-    nifi.security.user.oidc.discovery.url=${OIDC_DISCOVERY_URL}
-    nifi.security.user.oidc.client.id=${OIDC_CLIENT_ID}
-    nifi.security.user.oidc.client.secret=${OIDC_CLIENT_SECRET}
-    nifi.security.user.oidc.claim.identifying.user=preferred_username
-    nifi.security.user.oidc.additional.scopes=openid,email,profile
-
-    # Proxy (Cloudflare / ingress)
-    nifi.web.proxy.host=pipeline.z-script.io
+    nifi.ui.banner.text=
+    nifi.nar.library.directory=./lib
+    nifi.nar.library.autoload.directory=/opt/nifi/nifi-current/nar_extensions
+    nifi.nar.working.directory=./work/nar/
+    nifi.nar.unpack.uber.jar=false
+    nifi.upload.working.directory=./work/uploads
+    
+    #####################
+    # Python Extensions #
+    #####################
+    # Uncomment in order to enable Python Extensions.
+    nifi.python.command=python3
+    nifi.python.framework.source.directory=./python/framework
+    nifi.python.extensions.source.directory.default=/opt/nifi/nifi-current/python_extensions
+    nifi.python.working.directory=./work/python
+    nifi.python.max.processes=100
+    nifi.python.max.processes.per.extension.type=10
+    
+    ####################
+    # State Management #
+    ####################
+    nifi.state.management.configuration.file=./conf/state-management.xml
+    # The ID of the local state provider
+    nifi.state.management.provider.local=local-provider
+    # The ID of the cluster-wide state provider. This will be ignored if NiFi is not clustered but must be populated if running in a cluster.
+    nifi.state.management.provider.cluster=zk-provider
+    # The Previous Cluster State Provider from which the framework will load Cluster State when the current Cluster Provider has no entries
+    nifi.state.management.provider.cluster.previous=
+    # Specifies whether or not this instance of NiFi should run an embedded ZooKeeper server
+    nifi.state.management.embedded.zookeeper.start=false
+    # Properties file that provides the ZooKeeper properties to use if <nifi.state.management.embedded.zookeeper.start> is set to true
+    nifi.state.management.embedded.zookeeper.properties=./conf/zookeeper.properties
+    
+    # Database Settings
+    nifi.database.directory=./database_repository
+    
+    # FlowFile Repository
+    nifi.flowfile.repository.implementation=org.apache.nifi.controller.repository.WriteAheadFlowFileRepository
+    nifi.flowfile.repository.wal.implementation=org.apache.nifi.wali.SequentialAccessWriteAheadLog
+    nifi.flowfile.repository.directory=./flowfile_repository
+    nifi.flowfile.repository.checkpoint.interval=20 secs
+    nifi.flowfile.repository.always.sync=false
+    nifi.flowfile.repository.retain.orphaned.flowfiles=true
+    
+    nifi.swap.manager.implementation=org.apache.nifi.controller.FileSystemSwapManager
+    nifi.queue.swap.threshold=20000
+    
+    # Content Repository
+    nifi.content.repository.implementation=org.apache.nifi.controller.repository.FileSystemRepository
+    nifi.content.claim.max.appendable.size=50 KB
+    nifi.content.repository.directory.default=./content_repository
+    nifi.content.repository.archive.max.retention.period=3 hours
+    nifi.content.repository.archive.max.usage.percentage=90%
+    nifi.content.repository.archive.enabled=true
+    nifi.content.repository.always.sync=false
+    
+    # Provenance Repository Properties
+    nifi.provenance.repository.implementation=org.apache.nifi.provenance.WriteAheadProvenanceRepository
+    
+    # Persistent Provenance Repository Properties
+    nifi.provenance.repository.directory.default=./provenance_repository
+    nifi.provenance.repository.max.storage.time=30 days
+    nifi.provenance.repository.max.storage.size=10 GB
+    nifi.provenance.repository.rollover.time=10 mins
+    nifi.provenance.repository.rollover.size=100 MB
+    nifi.provenance.repository.query.threads=2
+    nifi.provenance.repository.index.threads=2
+    nifi.provenance.repository.compress.on.rollover=true
+    nifi.provenance.repository.always.sync=false
+    # Comma-separated list of fields. Fields that are not indexed will not be searchable. Valid fields are:
+    # EventType, FlowFileUUID, Filename, TransitURI, ProcessorID, AlternateIdentifierURI, Relationship, Details
+    nifi.provenance.repository.indexed.fields=EventType, FlowFileUUID, Filename, ProcessorID, Relationship
+    # FlowFile Attributes that should be indexed and made searchable.  Some examples to consider are filename, uuid, mime.type
+    nifi.provenance.repository.indexed.attributes=
+    # Large values for the shard size will result in more Java heap usage when searching the Provenance Repository
+    # but should provide better performance
+    nifi.provenance.repository.index.shard.size=500 MB
+    # Indicates the maximum length that a FlowFile attribute can be when retrieving a Provenance Event from
+    # the repository. If the length of any attribute exceeds this value, it will be truncated when the event is retrieved.
+    nifi.provenance.repository.max.attribute.length=65536
+    nifi.provenance.repository.concurrent.merge.threads=2
+    
+    # Volatile Provenance Respository Properties
+    nifi.provenance.repository.buffer.size=100000
+    
+    # Component and Node Status History Repository
+    nifi.components.status.repository.implementation=org.apache.nifi.controller.status.history.VolatileComponentStatusRepository
+    
+    # Volatile Status History Repository Properties
+    nifi.components.status.repository.buffer.size=1440
+    nifi.components.status.snapshot.frequency=1 min
+    
+    # QuestDB Status History Repository Properties
+    nifi.status.repository.questdb.persist.node.days=14
+    nifi.status.repository.questdb.persist.component.days=3
+    nifi.status.repository.questdb.persist.location=./status_repository
+    
+    # NAR Persistence Properties
+    nifi.nar.persistence.provider.implementation=org.apache.nifi.nar.StandardNarPersistenceProvider
+    nifi.nar.persistence.provider.properties.directory=./nar_repository
+    
+    # Asset Management
+    nifi.asset.manager.implementation=org.apache.nifi.asset.StandardAssetManager
+    nifi.asset.manager.properties.directory=./assets
+    nifi.connector.asset.manager.implementation=org.apache.nifi.asset.StandardConnectorAssetManager
+    nifi.connector.asset.manager.properties.directory=./connector_assets
+    
+    # Connector Configuration Provider
+    nifi.connector.configuration.provider.implementation=
+    
+    # Site to Site properties
+    nifi.remote.input.host=pipeline.z-script.io
+    nifi.remote.input.secure=true
+    nifi.remote.input.socket.port=10000
+    nifi.remote.input.http.enabled=true
+    nifi.remote.input.http.transaction.ttl=30 sec
+    nifi.remote.contents.cache.expiration=30 secs
+    
+    # web properties #
+    #############################################
+    
+    # For security, NiFi will present the UI on 127.0.0.1 and only be accessible through this loopback interface.
+    # Be aware that changing these properties may affect how your instance can be accessed without any restriction.
+    # We recommend configuring HTTPS instead. The administrators guide provides instructions on how to do this.
+    
+    nifi.web.http.host=
+    nifi.web.http.port=
+    nifi.web.http.network.interface.default=
+    
+    #############################################
+    
+    nifi.web.https.host=
+    nifi.web.https.port=8443
+    nifi.web.https.network.interface.default=
+    nifi.web.https.application.protocols=h2 http/1.1
+    nifi.web.jetty.working.directory=./work/jetty
+    nifi.web.jetty.threads=200
+    nifi.web.max.header.size=16 KB
     nifi.web.proxy.context.path=/nifi
-
-    # TLS (must exist via Secret)
+    nifi.web.proxy.host=pipeline.z-script.io
+    nifi.web.max.content.size=
+    nifi.web.max.requests.per.second=30000
+    nifi.web.max.access.token.requests.per.second=25
+    nifi.web.request.timeout=60 secs
+    nifi.web.request.ip.whitelist=
+    nifi.web.should.send.server.version=true
+    nifi.web.proxy.forward.headers.strategy=WEB_CONTEXT_SERVICE
+    nifi.web.request.log.format=%{client}a - %u %t "%r" %s %O "%{Referer}i" "%{User-Agent}i"
+    
+    # Filter JMX MBeans available through the System Diagnostics REST API
+    nifi.web.jmx.metrics.allowed.filter.pattern=
+    
+    # Include or Exclude TLS Cipher Suites for HTTPS
+    nifi.web.https.ciphersuites.include=
+    nifi.web.https.ciphersuites.exclude=
+    
+    # security properties #
+    nifi.sensitive.props.key=${PROPS_KEY}
+    nifi.sensitive.props.algorithm=NIFI_PBKDF2_AES_GCM_256
+    
+    nifi.security.autoreload.enabled=false
+    nifi.security.autoreload.interval=10 secs
     nifi.security.keystore=./conf/keystore.p12
+    nifi.security.keystore.certificate=
+    nifi.security.keystore.privateKey=
     nifi.security.keystoreType=PKCS12
     nifi.security.keystorePasswd=${KEYSTORE_PASSWORD}
     nifi.security.keyPasswd=${KEY_PASSWORD}
-
     nifi.security.truststore=./conf/truststore.p12
+    nifi.security.truststore.certificate=
     nifi.security.truststoreType=PKCS12
     nifi.security.truststorePasswd=${TRUSTSTORE_PASSWORD}
+    
+    nifi.security.user.authorizer=managed-authorizer
+    nifi.security.allow.anonymous.authentication=false
+    nifi.security.user.login.identity.provider=
+    nifi.security.user.jws.key.rotation.period=PT1H
+    
+    # OpenId Connect SSO Properties #
+    nifi.security.user.oidc.discovery.url=${OIDC_DISCOVERY_URL}
+    nifi.security.user.oidc.connect.timeout=5 secs
+    nifi.security.user.oidc.read.timeout=5 secs
+    nifi.security.user.oidc.client.id=${OIDC_CLIENT_ID}
+    nifi.security.user.oidc.client.secret=${OIDC_CLIENT_SECRET}
+    nifi.security.user.oidc.preferred.jwsalgorithm=
+    nifi.security.user.oidc.additional.scopes=openid,email,profile
+    nifi.security.user.oidc.claim.identifying.user=preferred_username
+    nifi.security.user.oidc.fallback.claims.identifying.user=
+    nifi.security.user.oidc.claim.groups=groups
+    nifi.security.user.oidc.truststore.strategy=JDK
+    nifi.security.user.oidc.token.refresh.window=60 secs
+    
+    # analytics properties #
+    nifi.analytics.predict.enabled=false
+    nifi.analytics.predict.interval=3 mins
+    nifi.analytics.query.interval=5 mins
+    nifi.analytics.connection.model.implementation=org.apache.nifi.controller.status.analytics.models.OrdinaryLeastSquares
+    nifi.analytics.connection.model.score.name=rSquared
+    nifi.analytics.connection.model.score.threshold=.90
+    
+    # kubernetes #
+    nifi.cluster.leader.election.kubernetes.lease.prefix=
+    
+    # flow analysis properties
+    nifi.registry.check.for.rule.violations.before.commit=
+    
+    # runtime monitoring properties
+    nifi.monitor.long.running.task.schedule=
+    nifi.monitor.long.running.task.threshold=
+    
+    # Enable automatic diagnostic at shutdown.
+    nifi.diagnostics.on.shutdown.enabled=false
+    
+    # Include verbose diagnostic information.
+    nifi.diagnostics.on.shutdown.verbose=false
+    
+    # The location of the diagnostics folder.
+    nifi.diagnostics.on.shutdown.directory=./diagnostics
+    
+    # The maximum number of files permitted in the directory. If the limit is exceeded, the oldest files are deleted.
+    nifi.diagnostics.on.shutdown.max.filecount=10
+    
+    # The diagnostics folder's maximum permitted size in bytes. If the limit is exceeded, the oldest files are deleted.
+    nifi.diagnostics.on.shutdown.max.directory.size=10 MB
+    
+    nifi.performance.tracking.percentage=0
+    
