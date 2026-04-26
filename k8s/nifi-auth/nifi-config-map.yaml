@@ -25,6 +25,11 @@ data:
           <property name="Node Identity 1"></property>
           <property name="Node Group"></property>
       </accessPolicyProvider>
+      <authorizer>
+        <identifier>managed-authorizer</identifier>
+        <class>org.apache.nifi.authorization.StandardManagedAuthorizer</class>
+        <property name="Access Policy Provider">file-access-policy-provider</property>
+      </authorizer>
     </authorizers>
   nifi.properties.tpl: |
     # Licensed to the Apache Software Foundation (ASF) under one or more
@@ -231,10 +236,10 @@ data:
     nifi.security.keyPasswd=${KEY_PASSWORD}
     nifi.security.truststore=./conf/truststore.p12
     nifi.security.truststore.certificate=
-    nifi.security.truststoreType=JKS
+    nifi.security.truststoreType=PKCS12
     nifi.security.truststorePasswd=${TRUSTSTORE_PASSWORD}
     
-    nifi.security.user.authorizer=
+    nifi.security.user.authorizer=managed-authorizer
     nifi.security.allow.anonymous.authentication=false
     nifi.security.user.login.identity.provider=
     nifi.security.user.jws.key.rotation.period=PT1H
@@ -407,5 +412,19 @@ data:
     #   nifi.nar.library.provider.nifi-registry.url=http://localhost:18080/nifi-registry-api
   login-identity-providers.tpl: |
     <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-      <loginIdentityProviders>
-      </loginIdentityProviders>
+    <loginIdentityProviders>
+        <!-- To enable the ldap-provider remove 2 lines. This is 1 of 2.
+        <provider>
+          <identifier>oidc-provider</identifier>
+          <class>org.apache.nifi.oauth2.OidcIdentityProvider</class>
+
+          <property name="Discovery URL">${OIDC_DISCOVERY_URL}</property>
+          <property name="Client ID">${OIDC_CLIENT_ID}</property>
+          <property name="Client Secret">${OIDC_CLIENT_SECRET}</property>
+          <property name="Redirect URI">https://pipeline.z-script.io/nifi-api/access/oidc/callback</property>
+
+          <property name="Preferred JWS Algorithm">RS256</property>
+          <property name="Claim Identifying User">preferred_username</property>
+          <property name="Additional Scopes">openid,email,profile</property>
+        </provider> 
+    </loginIdentityProviders>
