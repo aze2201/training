@@ -7,28 +7,29 @@ metadata:
 data:
   authorizers.xml: |
     <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-    <authorizers>
-      <userGroupProvider>
-       <identifier>file-user-group-provider</identifier>
-       <class>org.apache.nifi.authorization.FileUserGroupProvider</class>
-       <property name="Users File">./conf/users.xml</property>
-       <property name="Legacy Authorized Users File"></property>
-       <property name="Initial User Identity 1">fariz</property>
-     </userGroupProvider>
-     <accessPolicyProvider>
-       <identifier>file-access-policy-provider</identifier>
-       <class>org.apache.nifi.authorization.FileAccessPolicyProvider</class>
-       <property name="User Group Provider">file-user-group-provider</property>
-       <property name="Authorizations File">./conf/authorizations.xml</property>
-       <property name="Initial Admin Identity">fariz</property>
-       <property name="Legacy Authorized Users File"></property>
-       <property name="Node Identity 1"></property>
-     </accessPolicyProvider>
-     <authorizer>
+      <authorizers>
+        <userGroupProvider>
+          <identifier>file-user-group-provider</identifier>
+          <class>org.apache.nifi.authorization.FileUserGroupProvider</class>
+          <property name="Users File">./conf/users.xml</property>
+          <property name="Legacy Authorized Users File"></property>
+          <property name="Initial User Identity 1">fariz</property>
+        </userGroupProvider>
+      <accessPolicyProvider>
+          <identifier>file-access-policy-provider</identifier>
+          <class>org.apache.nifi.authorization.FileAccessPolicyProvider</class>
+          <property name="User Group Provider">file-user-group-provider</property>
+          <property name="Authorizations File">./conf/authorizations.xml</property>
+          <property name="Initial Admin Identity">fariz</property>
+          <property name="Legacy Authorized Users File"></property>
+          <property name="Node Identity 1"></property>
+          <property name="Node Group"></property>
+      </accessPolicyProvider>
+      <authorizer>
         <identifier>managed-authorizer</identifier>
         <class>org.apache.nifi.authorization.StandardManagedAuthorizer</class>
         <property name="Access Policy Provider">file-access-policy-provider</property>
-     </authorizer>
+      </authorizer>
     </authorizers>
   nifi.properties.tpl: |
     # Licensed to the Apache Software Foundation (ASF) under one or more
@@ -240,7 +241,7 @@ data:
     
     nifi.security.user.authorizer=managed-authorizer
     nifi.security.allow.anonymous.authentication=false
-    nifi.security.user.login.identity.provider=oidc-provider
+    nifi.security.user.login.identity.provider=
     nifi.security.user.jws.key.rotation.period=PT1H
     
     # OpenId Connect SSO Properties #
