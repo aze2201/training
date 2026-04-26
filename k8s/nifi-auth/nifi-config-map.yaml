@@ -25,6 +25,7 @@ data:
           <property name="Node Identity 1"></property>
           <property name="Node Group"></property>
       </accessPolicyProvider>
+    </authorizers>
   nifi.properties.tpl: |
     
     # Core Properties #
