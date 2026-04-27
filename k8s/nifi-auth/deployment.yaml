@@ -10,6 +10,7 @@ metadata:
 
 spec:
   replicas: 1
+
   selector:
     matchLabels:
       app: nifi
@@ -31,10 +32,13 @@ spec:
             - -c
             - |
               apk add --no-cache gettext
+
               echo "Rendering nifi.properties..."
               envsubst < /config/nifi.properties.tpl > /rendered/nifi.properties
-              envsubst < /config/login-identity-providers.tpl > /rendered/login-identity-providers.xml
+
+              echo "Copying authorizers..."
               cp /config/authorizers.xml /rendered/authorizers.xml
+
           env:
             - name: OIDC_CLIENT_ID
               valueFrom:
@@ -53,21 +57,6 @@ spec:
                 secretKeyRef:
                   name: nifi-oidc-secret
                   key: OIDC_CLIENT_SECRET
-
-            - name: SINGLE_USER_CREDENTIALS_USERNAME
-              valueFrom:
-                secretKeyRef:
-                  name: nifi-oidc-secret
-                  key: SINGLE_USER_CREDENTIALS_USERNAME
-                  
-            - name: SINGLE_USER_CREDENTIALS_PASSWORD
-              valueFrom:
-                secretKeyRef:
-                  name: nifi-oidc-secret
-                  key: SINGLE_USER_CREDENTIALS_PASSWORD
-
-            - name: NIFI_WEB_PROXY_HOST
-              value: pipeline.z-script.io
 
           volumeMounts:
             - name: nifi-config
@@ -100,25 +89,28 @@ spec:
             - /bin/bash
             - -c
             - |
-              echo "Copying rendered config..."
+              echo "Applying rendered configuration..."
+
               cp /opt/nifi/custom-conf/nifi.properties /opt/nifi/nifi-current/conf/nifi.properties
-              cp /opt/nifi/custom-conf/login-identity-providers.xml /opt/nifi/nifi-current/conf/login-identity-providers.xml
               cp /opt/nifi/custom-conf/authorizers.xml /opt/nifi/nifi-current/conf/authorizers.xml
-          
+
+              echo "Importing Keycloak certificate..."
+              PASSWORD=$(grep nifi.security.truststorePasswd conf/nifi.properties | cut -d'=' -f2)
+
+              openssl s_client -connect auth.z-script.io:443 -showcerts </dev/null 2>/dev/null \
+                | awk '/BEGIN CERTIFICATE/,/END CERTIFICATE/' > /tmp/keycloak.pem
+
+              keytool -import \
+                -alias keycloak \
+                -file /tmp/keycloak.pem \
+                -keystore ./conf/truststore.p12 \
+                -storetype PKCS12 \
+                -storepass ${PASSWORD} \
+                -noprompt
+
               echo "Starting NiFi..."
-              /opt/nifi/nifi-current/bin/nifi.sh run &
-              sleep 10s
-              password=$(cat conf/nifi.properties | grep nifi.security.truststorePasswd | awk -v FS='=' '{print $2}')
-              openssl s_client -connect auth.z-script.io:443 -showcerts 2>/dev/null </dev/null | awk '/BEGIN CERTIFICATE/,/END CERTIFICATE/{ print }' > /tmp/keycloak-chain.pem
-              keytool -import -alias keycloak-chain   -file /tmp/keycloak-chain.pem   -keystore ./conf/truststore.p12   -storetype PKCS12   -storepass ${password}    -noprompt
-          
-              echo "Waiting for NiFi logs..."
-              while [ ! -f /opt/nifi/nifi-current/logs/nifi-app.log ]; do
-                sleep 2
-              done
-          
-              echo "Tailing logs..."
-              tail -F /opt/nifi/nifi-current/logs/nifi-app.log
+              exec /opt/nifi/nifi-current/bin/nifi.sh run
+
           resources:
             requests:
               cpu: "500m"
