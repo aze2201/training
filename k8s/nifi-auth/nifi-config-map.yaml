@@ -226,7 +226,7 @@ data:
     
     nifi.security.user.authorizer=managed-authorizer
     nifi.security.allow.anonymous.authentication=false
-    nifi.security.user.login.identity.provider=
+    nifi.security.user.login.identity.provider=oidc
     nifi.security.user.jws.key.rotation.period=PT1H
     
     # OpenId Connect SSO Properties #
@@ -287,7 +287,7 @@ data:
     # and "sasl" which will give rights to the sasl/kerberos identity used to authenticate the nifi node
     # The identity is determined using the value in nifi.kerberos.service.principal and the removeHostFromPrincipal
     # and removeRealmFromPrincipal values (which should align with the kerberos.removeHostFromPrincipal and kerberos.removeRealmFromPrincipal
-    # values configured on the zookeeper server).f
+    # values configured on the zookeeper server)
     nifi.zookeeper.auth.type=
     nifi.zookeeper.kerberos.removeHostFromPrincipal=
     nifi.zookeeper.kerberos.removeRealmFromPrincipal=
@@ -359,6 +359,18 @@ data:
   login-identity-providers.tpl: |
     <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
     <loginIdentityProviders>
+        <!-- To enable the ldap-provider remove 2 lines. This is 1 of 2.
         <provider>
+          <identifier>oidc-provider</identifier>
+          <class>org.apache.nifi.oauth2.OidcIdentityProvider</class>
+
+          <property name="Discovery URL">${OIDC_DISCOVERY_URL}</property>
+          <property name="Client ID">${OIDC_CLIENT_ID}</property>
+          <property name="Client Secret">${OIDC_CLIENT_SECRET}</property>
+          <property name="Redirect URI">https://pipeline.z-script.io/nifi-api/access/oidc/callback</property>
+
+          <property name="Preferred JWS Algorithm">RS256</property>
+          <property name="Claim Identifying User">preferred_username</property>
+          <property name="Additional Scopes">openid,email,profile</property>
         </provider> 
     </loginIdentityProviders>
