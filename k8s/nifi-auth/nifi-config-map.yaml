@@ -50,7 +50,7 @@ data:
     nifi.queue.backpressure.size=1 GB
     
     nifi.authorizer.configuration.file=./conf/authorizers.xml
-    nifi.login.identity.provider.configuration.file=
+    nifi.login.identity.provider.configuration.file=./conf/login-identity-providers.xml
     nifi.ui.banner.text=
     nifi.nar.library.directory=./lib
     nifi.nar.library.autoload.directory=/opt/nifi/nifi-current/nar_extensions
@@ -226,7 +226,7 @@ data:
     
     nifi.security.user.authorizer=managed-authorizer
     nifi.security.allow.anonymous.authentication=false
-    nifi.security.user.login.identity.provider=oidc
+    nifi.security.user.login.identity.provider=
     nifi.security.user.jws.key.rotation.period=PT1H
     
     # OpenId Connect SSO Properties #
