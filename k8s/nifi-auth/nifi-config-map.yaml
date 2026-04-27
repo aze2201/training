@@ -287,17 +287,12 @@ data:
     # and "sasl" which will give rights to the sasl/kerberos identity used to authenticate the nifi node
     # The identity is determined using the value in nifi.kerberos.service.principal and the removeHostFromPrincipal
     # and removeRealmFromPrincipal values (which should align with the kerberos.removeHostFromPrincipal and kerberos.removeRealmFromPrincipal
-    # values configured on the zookeeper server).
+    # values configured on the zookeeper server).f
     nifi.zookeeper.auth.type=
     nifi.zookeeper.kerberos.removeHostFromPrincipal=
     nifi.zookeeper.kerberos.removeRealmFromPrincipal=
     
-    # kerberos #
-    nifi.kerberos.krb5.file=
-    
-    # kerberos service principal #
-    nifi.kerberos.service.principal=
-    nifi.kerberos.service.keytab.location=
+
     
     # analytics properties #
     nifi.analytics.predict.enabled=false
@@ -361,3 +356,9 @@ data:
     # Example NiFi Registry NAR Provider:
     #   nifi.nar.library.provider.nifi-registry.implementation=org.apache.nifi.registry.extension.NiFiRegistryExternalResourceProvider
     #   nifi.nar.library.provider.nifi-registry.url=http://localhost:18080/nifi-registry-api
+  login-identity-providers.tpl: |
+    <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+    <loginIdentityProviders>
+        <provider>
+        </provider> 
+    </loginIdentityProviders>
