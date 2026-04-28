@@ -55,7 +55,7 @@ data:
     nifi.nar.library.directory=./lib
     nifi.nar.library.autoload.directory=/opt/nifi/nifi-current/nar_extensions
     nifi.nar.working.directory=./work/nar/
-    nifi.nar.unpack.uber.jar=false
+    nifi.nar.unpack.uber.jar=true
     nifi.upload.working.directory=./work/uploads
     
     #####################
@@ -226,7 +226,7 @@ data:
     
     nifi.security.user.authorizer=managed-authorizer
     nifi.security.allow.anonymous.authentication=false
-    nifi.security.user.login.identity.provider=
+    nifi.security.user.login.identity.provider=oidc
     nifi.security.user.jws.key.rotation.period=PT1H
     
     # OpenId Connect SSO Properties #
