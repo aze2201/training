@@ -33,6 +33,8 @@ data:
     </authorizers>
   nifi.properties.tpl: |
     # SENSITIVE
+    nifi.cluster.protocol.heartbeat.interval=5 sec
+    nifi.cluster.load.balance.comms.timeout=30 sec
     nifi.cluster.node.connection.timeout=5 sec
     nifi.cluster.node.read.timeout=5 sec
     nifi.web.max.requests.per.second=30000
