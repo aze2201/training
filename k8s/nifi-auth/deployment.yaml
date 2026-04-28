@@ -60,6 +60,24 @@ spec:
                 secretKeyRef:
                   name: nifi-oidc-secret
                   key: OIDC_CLIENT_SECRET
+                  
+            - name: KEYSTORE_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: nifi-oidc-secret
+                  key: KEYSTORE_PASSWORD
+                  
+            - name: TRUSTSTORE_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: nifi-oidc-secret
+                  key: TRUSTSTORE_PASSWORD
+                  
+            - name: PROPS_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: nifi-oidc-secret
+                  key: PROPS_KEY
 
           volumeMounts:
             - name: nifi-config
