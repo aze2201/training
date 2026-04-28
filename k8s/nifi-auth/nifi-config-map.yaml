@@ -182,7 +182,7 @@ data:
     
     #############################################
     
-    nifi.web.https.host=
+    nifi.web.https.host=pipeline.z-script.io
     nifi.web.https.port=8443
     nifi.web.https.network.interface.default=
     nifi.web.https.application.protocols=h2 http/1.1
