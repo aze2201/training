@@ -25,4 +25,4 @@ spec:
               service:
                 name: nifi-service
                 port:
-                  number: 80
+                  number: 8081
