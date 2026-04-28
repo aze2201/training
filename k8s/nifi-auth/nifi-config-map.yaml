@@ -38,7 +38,7 @@ data:
     nifi.flow.configuration.archive.dir=./conf/archive/
     nifi.flow.configuration.archive.max.time=30 days
     nifi.flow.configuration.archive.max.storage=500 MB
-    nifi.flow.configuration.archive.max.count=
+    nifi.flow.configuration.archive.max.count=500
     nifi.flowcontroller.autoResumeState=true
     nifi.flowcontroller.graceful.shutdown.period=10 sec
     nifi.flowcontroller.registry.sync.interval=30 min
@@ -191,7 +191,7 @@ data:
     nifi.web.max.header.size=16 KB
     nifi.web.proxy.context.path=/nifi
     nifi.web.proxy.host=pipeline.z-script.io
-    nifi.web.max.content.size=
+    nifi.web.max.content.size=10 MB
     nifi.web.max.requests.per.second=30000
     nifi.web.max.access.token.requests.per.second=25
     nifi.web.request.timeout=60 secs
