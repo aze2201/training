@@ -100,7 +100,7 @@ spec:
               done
           
               echo "Tailing logs..."
-              tail -F /opt/nifi/nifi-current/logs/nifi-app.log
+              tail -F /opt/nifi/nifi-current/logs/*.log
           resources:
             requests:
               cpu: "500m"
