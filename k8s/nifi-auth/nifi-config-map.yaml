@@ -185,7 +185,7 @@ data:
     nifi.web.https.host=
     nifi.web.https.port=
     nifi.web.https.network.interface.default=
-    nifi.web.https.application.protocols=h2 http/1.1
+    nifi.web.https.application.protocols=
     nifi.web.jetty.working.directory=./work/jetty
     nifi.web.jetty.threads=200
     nifi.web.max.header.size=16 KB
@@ -208,21 +208,21 @@ data:
     nifi.web.https.ciphersuites.exclude=
     
     # security properties #
-    nifi.sensitive.props.key=${PROPS_KEY}
-    nifi.sensitive.props.algorithm=NIFI_PBKDF2_AES_GCM_256
+    nifi.sensitive.props.key=
+    nifi.sensitive.props.algorithm=
     
-    nifi.security.autoreload.enabled=false
-    nifi.security.autoreload.interval=10 secs
-    nifi.security.keystore=./conf/keystore.p12
+    nifi.security.autoreload.enabled=
+    nifi.security.autoreload.interval=
+    nifi.security.keystore=
     nifi.security.keystore.certificate=
     nifi.security.keystore.privateKey=
-    nifi.security.keystoreType=PKCS12
-    nifi.security.keystorePasswd=${KEYSTORE_PASSWORD}
-    nifi.security.keyPasswd=${KEY_PASSWORD}
-    nifi.security.truststore=./conf/truststore.p12
+    nifi.security.keystoreType=
+    nifi.security.keystorePasswd=
+    nifi.security.keyPasswd=
+    nifi.security.truststore=
     nifi.security.truststore.certificate=
-    nifi.security.truststoreType=PKCS12
-    nifi.security.truststorePasswd=${TRUSTSTORE_PASSWORD}
+    nifi.security.truststoreType=
+    nifi.security.truststorePasswd=
     
     nifi.security.user.authorizer=managed-authorizer
     nifi.security.allow.anonymous.authentication=false
