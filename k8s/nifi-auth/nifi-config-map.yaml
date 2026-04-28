@@ -49,6 +49,8 @@ data:
     # HTTP (debug first)
     nifi.web.http.host=0.0.0.0
     nifi.web.http.port=8080
+    nifi.web.proxy.host=pipeline.z-script.io
+    nifi.web.proxy.context.path=/nifi
     # SECURITY
     nifi.security.user.authorizer=managed-authorizer
     nifi.security.allow.anonymous.authentication=false
