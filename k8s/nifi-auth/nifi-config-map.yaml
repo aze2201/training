@@ -162,7 +162,7 @@ data:
     nifi.connector.configuration.provider.implementation=
     
     # Site to Site properties
-    nifi.remote.input.host=pipeline.z-script.io
+    nifi.remote.input.host=
     nifi.remote.input.secure=true
     nifi.remote.input.socket.port=10000
     nifi.remote.input.http.enabled=true
