@@ -42,3 +42,7 @@ stringData:
   KEYCLOAK_ADMIN: admin
   KEYCLOAK_ADMIN_PASSWORD: "SuperSecretPassword"
 '
+
+
+kubectl edit configmap nifi-config-map -n nifi
+kubectl rollout restart deployment/nifi -n nifi
