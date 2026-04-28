@@ -10,7 +10,6 @@ metadata:
 
 spec:
   replicas: 1
-
   selector:
     matchLabels:
       app: nifi
@@ -32,16 +31,10 @@ spec:
             - -c
             - |
               apk add --no-cache gettext
-
               echo "Rendering nifi.properties..."
               envsubst < /config/nifi.properties.tpl > /rendered/nifi.properties
-
-              echo "Copying authorizers..."
+              envsubst < /config/login-identity-providers.tpl > /rendered/login-identity-providers.xml
               cp /config/authorizers.xml /rendered/authorizers.xml
-
-              envsubst <  /config/login-identity-providers.tpl > /rendered/login-identity-providers.xml
-
-
           env:
             - name: OIDC_CLIENT_ID
               valueFrom:
@@ -60,24 +53,21 @@ spec:
                 secretKeyRef:
                   name: nifi-oidc-secret
                   key: OIDC_CLIENT_SECRET
-                  
-            - name: KEYSTORE_PASSWORD
+
+            - name: SINGLE_USER_CREDENTIALS_USERNAME
               valueFrom:
                 secretKeyRef:
                   name: nifi-oidc-secret
-                  key: KEYSTORE_PASSWORD
+                  key: SINGLE_USER_CREDENTIALS_USERNAME
                   
-            - name: TRUSTSTORE_PASSWORD
+            - name: SINGLE_USER_CREDENTIALS_PASSWORD
               valueFrom:
                 secretKeyRef:
                   name: nifi-oidc-secret
-                  key: TRUSTSTORE_PASSWORD
-                  
-            - name: PROPS_KEY
-              valueFrom:
-                secretKeyRef:
-                  name: nifi-oidc-secret
-                  key: PROPS_KEY
+                  key: SINGLE_USER_CREDENTIALS_PASSWORD
+
+            - name: NIFI_WEB_PROXY_HOST
+              value: pipeline.z-script.io
 
           volumeMounts:
             - name: nifi-config
@@ -110,16 +100,21 @@ spec:
             - /bin/bash
             - -c
             - |
-              echo "Applying rendered configuration..."
-
+              echo "Copying rendered config..."
               cp /opt/nifi/custom-conf/nifi.properties /opt/nifi/nifi-current/conf/nifi.properties
-              cp /opt/nifi/custom-conf/authorizers.xml /opt/nifi/nifi-current/conf/authorizers.xml
               cp /opt/nifi/custom-conf/login-identity-providers.xml /opt/nifi/nifi-current/conf/login-identity-providers.xml
-
-              echo "Starting NiFi in foreground..."
-              exec /opt/nifi/nifi-current/bin/nifi.sh run &
-              tail -f /opt/nifi/nifi-current/logs/nifi-app.log
-
+              cp /opt/nifi/custom-conf/authorizers.xml /opt/nifi/nifi-current/conf/authorizers.xml
+          
+              echo "Starting NiFi..."
+              /opt/nifi/nifi-current/bin/nifi.sh run &
+          
+              echo "Waiting for NiFi logs..."
+              while [ ! -f /opt/nifi/nifi-current/logs/nifi-app.log ]; do
+                sleep 2
+              done
+          
+              echo "Tailing logs..."
+              tail -F /opt/nifi/nifi-current/logs/nifi-app.log
           resources:
             requests:
               cpu: "500m"
