@@ -42,7 +42,7 @@ data:
     nifi.web.request.timeout=60 secs
     nifi.web.request.ip.whitelist=
     nifi.web.should.send.server.version=true
-    nifi.web.proxy.forward.headers.strategy=WEB_CONTEXT_SERVICE
+    nifi.web.proxy.forward.headers.strategy=STANDARD
     nifi.web.request.log.format=%{client}a - %u %t "%r" %s %O "%{Referer}i" "%{User-Agent}i"
     nifi.sensitive.props.key=Mmag5EcuibCSY03g4j8Xgmkd6WpszXbD
     nifi.sensitive.props.algorithm=NIFI_PBKDF2_AES_GCM_256
