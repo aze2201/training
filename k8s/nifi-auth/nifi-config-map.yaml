@@ -177,7 +177,7 @@ data:
     # We recommend configuring HTTPS instead. The administrators guide provides instructions on how to do this.
     
     nifi.web.http.host=
-    nifi.web.http.port=
+    nifi.web.http.port=8080
     nifi.web.http.network.interface.default=
     
     #############################################
