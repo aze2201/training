@@ -68,11 +68,11 @@ spec:
           image: apache/nifi:1.26.0
 
           ports:
-            - containerPort: 8443
+            - containerPort: 8080
 
           env:
-            - name: NIFI_WEB_HTTPS_PORT
-              value: "8443"
+            - name: NIFI_WEB_HTTP_PORT
+              value: "8080"
 
             - name: NIFI_WEB_PROXY_HOST
               value: pipeline.z-script.io
@@ -118,21 +118,21 @@ spec:
 
           startupProbe:
             tcpSocket:
-              port: 8443
+              port: 8080
             initialDelaySeconds: 120
             periodSeconds: 10
             failureThreshold: 30
 
           readinessProbe:
             tcpSocket:
-              port: 8443
+              port: 8080
             initialDelaySeconds: 120
             periodSeconds: 15
             failureThreshold: 10
 
           livenessProbe:
             tcpSocket:
-              port: 8443
+              port: 8080
             initialDelaySeconds: 240
             periodSeconds: 20
             failureThreshold: 5
