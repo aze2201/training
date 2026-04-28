@@ -36,7 +36,7 @@ data:
     nifi.sensitive.props.key=Mmag5EcuibCSY03g4j8Xgmkd6WpszXbD
     nifi.sensitive.props.algorithm=NIFI_PBKDF2_AES_GCM_256
     # HTTP (debug first)
-    nifi.web.http.host=0.0.0.0
+    nifi.web.http.host=
     nifi.web.http.port=8080
     # SECURITY
     nifi.security.user.authorizer=managed-authorizer
