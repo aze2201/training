@@ -411,7 +411,7 @@ data:
     #   nifi.nar.library.provider.nifi-registry.implementation=org.apache.nifi.registry.extension.NiFiRegistryExternalResourceProvider
     #   nifi.nar.library.provider.nifi-registry.url=http://localhost:18080/nifi-registry-api
   login-identity-providers.tpl: |
-    <?xml version="1.0" encoding="UTF-8" standalone="yes"?><!--
+    <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
     <loginIdentityProviders>
         <provider>
             <identifier>oidc-provider</identifier>
