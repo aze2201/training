@@ -11,3 +11,4 @@ resources:
   - ingress.yaml
   - nifi-config-map.yaml
   - nifi-oidc-config.yaml
+  - http-config-map.yaml
