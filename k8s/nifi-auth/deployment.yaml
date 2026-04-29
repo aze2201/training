@@ -66,7 +66,7 @@ spec:
 
       containers:
         - name: nifi
-          image: apache/nifi:1.26.0
+          image: apache/nifi:latest
 
           ports:
             - containerPort: 8443
