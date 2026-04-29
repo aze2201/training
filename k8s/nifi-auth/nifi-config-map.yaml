@@ -88,7 +88,7 @@ data:
     nifi.nar.library.directory=./lib
     nifi.nar.library.autoload.directory=/opt/nifi/nifi-current/nar_extensions
     nifi.nar.working.directory=./work/nar/
-    nifi.nar.unpack.uber.jar=true
+    nifi.nar.unpack.uber.jar=false
     nifi.upload.working.directory=./work/uploads
     
     #####################
