@@ -16,6 +16,9 @@ metadata:
     nginx.ingress.kubernetes.io/proxy-cookie-path: "/ /"
     nginx.ingress.kubernetes.io/forwarded-for-header: "X-Forwarded-For"
     nginx.ingress.kubernetes.io/proxy-set-headers: "nifi/nifi-proxy-headers"
+    nginx.ingress.kubernetes.io/configuration-snippet: |
+      proxy_set_header X-Forwarded-Proto https;
+      proxy_set_header X-Forwarded-Port 443;
 spec:
   ingressClassName: nginx
   rules:
