@@ -212,7 +212,8 @@ data:
     nifi.web.request.timeout=60 secs
     nifi.web.request.ip.whitelist=
     nifi.web.should.send.server.version=true
-    nifi.web.proxy.forward.headers.strategy=NATIVE
+    nifi.web.proxy.forward.headers.strategy=WEB_CONTEXT_SERVICE
+    
     nifi.web.request.log.format=%{client}a - %u %t "%r" %s %O "%{Referer}i" "%{User-Agent}i"
     
     # Filter JMX MBeans available through the System Diagnostics REST API
