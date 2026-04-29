@@ -19,7 +19,7 @@ spec:
     - host: pipeline.z-script.io
       http:
         paths:
-          - path: /
+          - path: /nifi
             pathType: Prefix
             backend:
               service:
