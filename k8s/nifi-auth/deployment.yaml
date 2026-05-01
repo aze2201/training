@@ -100,7 +100,11 @@ spec:
               /opt/nifi/nifi-current/bin/nifi.sh run &
               pid=$?
               
-              while [ ! -f /opt/nifi/nifi-current/conf/flow.xml.gz ] ; do
+              while true; do
+                curl -f -k https://localhost:8443
+                if [ $? -eq 0 ]; then
+                  break
+                fi
                 sleep 5s
                 echo "Waiting populate authorizations and flow"
               done
