@@ -99,9 +99,19 @@ spec:
               echo "Starting NiFi..."
               /opt/nifi/nifi-current/bin/nifi.sh run &
               pid=$?
+              
+              while [ ! -f /opt/nifi/nifi-current/conf/authorizations.xml ] ; do
+                sleep 5s
+                echo "Waiting populate authorizations"
+              done
+              echo "Deleting files
               rm -f /opt/nifi/nifi-current/conf/users.xml
-              rm -f /opt/nifi/nifi-current/conf/authorizations.xml      
+              rm -f /opt/nifi/nifi-current/conf/authorizations.xml
+
+              echo "Killing process $pid"
               kill -9 $pid
+
+              echo "Starting file"
               /opt/nifi/nifi-current/bin/nifi.sh run &
           
               echo "Waiting for NiFi logs..."
