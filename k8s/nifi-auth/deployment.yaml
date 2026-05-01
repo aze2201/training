@@ -98,6 +98,9 @@ spec:
               
               echo "Starting NiFi..."
               /opt/nifi/nifi-current/bin/nifi.sh run &
+              pid=$?
+              kill -9 $pid
+              /opt/nifi/nifi-current/bin/nifi.sh run &
           
               echo "Waiting for NiFi logs..."
               while [ ! -f /opt/nifi/nifi-current/logs/nifi-app.log ]; do
