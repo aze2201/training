@@ -115,9 +115,6 @@ spec:
               memory: "4Gi"
 
           volumeMounts:
-            - name: nifi-data
-              mountPath: /opt/nifi/nifi-current/conf
-              subPath: conf
 
             - name: nifi-data
               mountPath: /opt/nifi/nifi-current/database_repository
