@@ -120,7 +120,7 @@ spec:
 
           volumeMounts:
             - name: nifi-data
-              mountPath: /opt/nifi/nifi-current/data
+              mountPath: /opt/nifi/nifi-current
 
             - name: rendered-config
               mountPath: /opt/nifi/custom-conf
