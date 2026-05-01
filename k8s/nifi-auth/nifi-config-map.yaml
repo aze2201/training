@@ -20,7 +20,7 @@ data:
           <class>org.apache.nifi.authorization.FileAccessPolicyProvider</class>
           <property name="User Group Provider">file-user-group-provider</property>
           <property name="Authorizations File">./conf/authorizations.xml</property>
-          <property name="Initial Admin Identity">fariz</property>
+          <property name="Initial Admin Identity">/nifi-users</property>
           <property name="Legacy Authorized Users File"></property>
           <property name="Node Identity 1"></property>
           <property name="Node Group"></property>
