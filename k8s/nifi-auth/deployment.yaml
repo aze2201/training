@@ -120,7 +120,22 @@ spec:
 
           volumeMounts:
             - name: nifi-data
-              mountPath: /opt/nifi/nifi-current
+              mountPath: /opt/nifi/nifi-current/conf
+
+            - name: nifi-data
+              mountPath: /opt/nifi/nifi-current/database_repository
+
+            - name: nifi-data
+              mountPath: /opt/nifi/nifi-current/flowfile_repository
+
+            - name: nifi-data
+              mountPath: /opt/nifi/nifi-current/content_repository
+
+            - name: nifi-data
+              mountPath: /opt/nifi/nifi-current/provenance_repository
+
+            - name: nifi-data
+              mountPath: /opt/nifi/nifi-current/state
 
             - name: rendered-config
               mountPath: /opt/nifi/custom-conf
