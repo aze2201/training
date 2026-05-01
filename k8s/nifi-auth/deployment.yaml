@@ -104,7 +104,7 @@ spec:
                 sleep 5s
                 echo "Waiting populate authorizations"
               done
-              echo "Deleting files
+              echo "Deleting files"
               rm -f /opt/nifi/nifi-current/conf/users.xml
               rm -f /opt/nifi/nifi-current/conf/authorizations.xml
 
