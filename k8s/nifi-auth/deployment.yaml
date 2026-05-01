@@ -100,9 +100,9 @@ spec:
               /opt/nifi/nifi-current/bin/nifi.sh run &
               pid=$?
               
-              while [ ! -f /opt/nifi/nifi-current/conf/authorizations.xml ] ; do
+              while [ ! -f /opt/nifi/nifi-current/conf/flow.xml.gz ] ; do
                 sleep 5s
-                echo "Waiting populate authorizations"
+                echo "Waiting populate authorizations and flow"
               done
               echo "Deleting files"
               rm -f /opt/nifi/nifi-current/conf/users.xml
