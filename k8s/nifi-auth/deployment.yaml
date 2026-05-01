@@ -142,9 +142,6 @@ spec:
             - name: rendered-config
               mountPath: /opt/nifi/custom-conf
 
-            - name: rendered-config
-              mountPath: /opt/nifi/custom-conf
-
           startupProbe:
             tcpSocket:
               port: 8443
