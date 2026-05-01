@@ -101,7 +101,7 @@ spec:
               pid=$?
               
               while true; do
-                curl -f -k https://localhost:8443/nifi-api/flow/current-user
+                curl -f -k https://localhost:8443
                 if [ $? -eq 0 ]; then
                   break
                 fi
@@ -112,8 +112,8 @@ spec:
               rm -f /opt/nifi/nifi-current/conf/users.xml
               rm -f /opt/nifi/nifi-current/conf/authorizations.xml
 
-              echo "stopping process $pid"
-              /opt/nifi/nifi-current/bin/nifi.sh stop
+              echo "Killing process $pid"
+              kill -9 $pid
 
               echo "Starting file"
               /opt/nifi/nifi-current/bin/nifi.sh run &
