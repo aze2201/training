@@ -1,0 +1,105 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nextcloud
+  namespace: nextcloud
+  labels:
+    app.kubernetes.io/name: nextcloud
+    app.kubernetes.io/component: app
+    app.kubernetes.io/part-of: nextcloud
+    security-tier: internal
+spec:
+  replicas: 1
+
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: nextcloud
+
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: nextcloud
+        app.kubernetes.io/component: app
+        app.kubernetes.io/part-of: nextcloud
+
+        # Future NetworkPolicy labels
+        access-db: "true"
+        ingress-web: "true"
+        egress-internet: "true"
+
+    spec:
+      containers:
+        - name: nextcloud
+          image: nextcloud:30-apache
+
+          ports:
+            - containerPort: 80
+
+          env:
+            - name: POSTGRES_HOST
+              value: "YOUR_POSTGRES_SERVICE"
+
+            - name: POSTGRES_DB
+              value: "nextcloud"
+
+            - name: POSTGRES_USER
+              value: "nextcloud"
+
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: nextcloud-secret
+                  key: postgres-password
+
+            - name: NEXTCLOUD_ADMIN_USER
+              valueFrom:
+                secretKeyRef:
+                  name: nextcloud-secret
+                  key: nextcloud-admin-user
+
+            - name: NEXTCLOUD_ADMIN_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: nextcloud-secret
+                  key: nextcloud-admin-password
+
+            - name: NEXTCLOUD_TRUSTED_DOMAINS
+              value: "share.z-script.io"
+
+            - name: OVERWRITEHOST
+              value: "share.z-script.io"
+
+            - name: OVERWRITEPROTOCOL
+              value: "https"
+
+          volumeMounts:
+            - name: nextcloud-data
+              mountPath: /var/www/html
+
+          readinessProbe:
+            httpGet:
+              path: /status.php
+              port: 80
+            initialDelaySeconds: 30
+            periodSeconds: 10
+
+          livenessProbe:
+            httpGet:
+              path: /status.php
+              port: 80
+            initialDelaySeconds: 60
+            periodSeconds: 20
+
+          resources:
+            requests:
+              cpu: "500m"
+              memory: "1Gi"
+
+            limits:
+              cpu: "2"
+              memory: "4Gi"
+
+      volumes:
+        - name: nextcloud-data
+          persistentVolumeClaim:
+            claimName: nextcloud-data
