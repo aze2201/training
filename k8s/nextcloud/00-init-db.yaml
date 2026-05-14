@@ -23,13 +23,13 @@ spec:
             - name: PGUSER
               valueFrom:
                 secretKeyRef:
-                  name: postgres-secret
+                  name: nextcloud-secret
                   key: POSTGRES_USER
 
             - name: PGPASSWORD
               valueFrom:
                 secretKeyRef:
-                  name: postgres-secret
+                  name: nextcloud-secret
                   key: POSTGRES_PASSWORD
 
           command:
