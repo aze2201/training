@@ -31,6 +31,9 @@ spec:
 
             - name: PGPORT
               value: "5432"
+              
+            - name: PGDATABASE
+              value: appdb
 
             - name: PGUSER
               valueFrom:
