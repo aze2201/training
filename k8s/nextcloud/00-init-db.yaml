@@ -54,16 +54,11 @@ spec:
               set -e
 
               echo "Checking database..."
-              psql -v ON_ERROR_STOP=1 <<EOF
-
-              psql -v ON_ERROR_STOP=1 <<EOF
-              DO \$\$
-              BEGIN
-                 IF NOT EXISTS (SELECT FROM pg_database WHERE datname = 'nextcloud') THEN
-                    CREATE DATABASE nextcloud;
-                 END IF;
-              END
-              \$\$;
-              EOF
+              psql -U "$PGUSER" -d "$PGDATABASE" -c "
+               CREATE DATABASE nextcloud
+               WITH OWNER appuser
+               ENCODING 'UTF8'
+               TEMPLATE template0
+              " || true
 
               echo "Nextcloud DB ensured"
