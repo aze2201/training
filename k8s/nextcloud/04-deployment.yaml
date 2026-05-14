@@ -38,9 +38,9 @@ spec:
             - /bin/bash
             - -c
             - |
-              /entrypoint apache2-foreground &
+              /entrypoint.sh apache2-foreground &
               (
-                sleep 60
+                sleep 90s
                 /bin/bash /bootstrap/bootstrap.sh
               ) &
               wait
