@@ -3,9 +3,21 @@ kind: Job
 metadata:
   name: nextcloud-postgres-init
   namespace: nextcloud
+  labels:
+    app: nextcloud-postgres-init
 
 spec:
+  backoffLimit: 1
+
+  selector:
+    matchLabels:
+      job-name: nextcloud-postgres-init
+
   template:
+    metadata:
+      labels:
+        job-name: nextcloud-postgres-init
+
     spec:
       restartPolicy: Never
 
@@ -38,7 +50,7 @@ spec:
             - |
               set -e
 
-              echo "Creating Nextcloud database if not exists..."
+              echo "Checking database..."
 
               psql -v ON_ERROR_STOP=1 <<EOF
               DO \$\$
@@ -50,4 +62,4 @@ spec:
               \$\$;
               EOF
 
-              echo "Done"
+              echo "Nextcloud DB ensured"
