@@ -1,0 +1,53 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: nextcloud-postgres-init
+  namespace: nextcloud
+
+spec:
+  template:
+    spec:
+      restartPolicy: Never
+
+      containers:
+        - name: postgres-init
+          image: postgres:16
+
+          env:
+            - name: PGHOST
+              value: postgres.database.svc.cluster.local
+
+            - name: PGPORT
+              value: "5432"
+
+            - name: PGUSER
+              valueFrom:
+                secretKeyRef:
+                  name: postgres-secret
+                  key: POSTGRES_USER
+
+            - name: PGPASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: postgres-secret
+                  key: POSTGRES_PASSWORD
+
+          command:
+            - /bin/bash
+            - -c
+            - |
+              set -e
+
+              echo "Creating Nextcloud database if not exists..."
+
+              psql -v ON_ERROR_STOP=1 <<EOF
+              DO \$\$
+              BEGIN
+                 IF NOT EXISTS (SELECT FROM pg_database WHERE datname = 'nextcloud') THEN
+                    CREATE DATABASE nextcloud;
+                 END IF;
+              END
+              \$\$;
+              EOF
+
+              echo "Done"
