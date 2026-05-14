@@ -84,7 +84,7 @@ spec:
             - name: OIDC_CLIENT_SECRET
               valueFrom:
                 secretKeyRef:
-                  name: nextcloud-oidc-secret
+                  name: nextcloud-secret
                   key: client-secret
 
           volumeMounts:
