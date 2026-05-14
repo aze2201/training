@@ -59,7 +59,7 @@ spec:
               value: "nextcloud"
 
             - name: POSTGRES_USER
-              value: "nextcloud"
+              value: "appuser"
 
             - name: POSTGRES_PASSWORD
               valueFrom:
