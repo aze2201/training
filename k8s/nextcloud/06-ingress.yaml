@@ -4,26 +4,23 @@ metadata:
   name: nextcloud
   namespace: nextcloud
 
-  labels:
-    app.kubernetes.io/name: nextcloud
-    app.kubernetes.io/component: ingress
-
   annotations:
     nginx.ingress.kubernetes.io/proxy-body-size: "10G"
     nginx.ingress.kubernetes.io/proxy-read-timeout: "3600"
     nginx.ingress.kubernetes.io/proxy-send-timeout: "3600"
+
+    nginx.ingress.kubernetes.io/use-forwarded-headers: "true"
+    nginx.ingress.kubernetes.io/real-ip-header: "CF-Connecting-IP"
 
 spec:
   ingressClassName: nginx
 
   rules:
     - host: share.z-script.io
-
       http:
         paths:
           - path: /
             pathType: Prefix
-
             backend:
               service:
                 name: nextcloud
