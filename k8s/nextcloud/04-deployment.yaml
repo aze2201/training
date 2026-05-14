@@ -5,30 +5,55 @@ metadata:
   name: nextcloud
   namespace: nextcloud
 
+  labels:
+    app.kubernetes.io/name: nextcloud
+    app.kubernetes.io/component: app
+    app.kubernetes.io/part-of: nextcloud
+
 spec:
   replicas: 1
 
   selector:
     matchLabels:
-      app: nextcloud
+      app.kubernetes.io/name: nextcloud
 
   template:
     metadata:
       labels:
-        app: nextcloud
+        app.kubernetes.io/name: nextcloud
+        app.kubernetes.io/component: app
+        app.kubernetes.io/part-of: nextcloud
+
+        # Future NetworkPolicy labels
+        access-db: "true"
+        ingress-web: "true"
+        auth-provider: keycloak
 
     spec:
       containers:
         - name: nextcloud
           image: nextcloud:30-apache
 
+          command:
+            - /bin/bash
+            - -c
+            - |
+              /entrypoint.sh apache2-foreground &
+              (
+                sleep 90s
+                /bin/bash /bootstrap/bootstrap.sh
+              ) &
+              wait
+
           ports:
             - containerPort: 80
 
           env:
-            # ===== DATABASE 
             - name: POSTGRES_HOST
               value: "postgres.database.svc.cluster.local"
+
+            - name: POSTGRES_PORT
+              value: "5432"
 
             - name: POSTGRES_DB
               value: "nextcloud"
@@ -42,10 +67,6 @@ spec:
                   name: nextcloud-secret
                   key: postgres-password
 
-            - name: POSTGRES_PORT
-              value: "5432"
-
-            # ===== NEXTCLOUD ADMIN AUTO CREATE =====
             - name: NEXTCLOUD_ADMIN_USER
               valueFrom:
                 secretKeyRef:
@@ -58,7 +79,6 @@ spec:
                   name: nextcloud-secret
                   key: nextcloud-admin-password
 
-            # ===== DOMAIN =====
             - name: NEXTCLOUD_TRUSTED_DOMAINS
               value: "share.z-script.io"
 
@@ -68,7 +88,6 @@ spec:
             - name: OVERWRITEPROTOCOL
               value: "http"
 
-            # ===== OIDC =====
             - name: OIDC_PROVIDER_URL
               value: "http://keycloak.keycloak.svc.cluster.local/realms/main"
 
@@ -85,26 +104,40 @@ spec:
             - name: nextcloud-data
               mountPath: /var/www/html
 
-            - name: bootstrap
+            - name: bootstrap-script
               mountPath: /bootstrap
 
-          command:
-            - /bin/bash
-            - -c
-            - |
-              /entrypoint.sh apache2-foreground &
-              (
-                sleep 60
-                bash /bootstrap/bootstrap.sh
-              ) &
-              wait
+          readinessProbe:
+            httpGet:
+              path: /status.php
+              port: 80
+
+            initialDelaySeconds: 30
+            periodSeconds: 10
+
+          livenessProbe:
+            httpGet:
+              path: /status.php
+              port: 80
+
+            initialDelaySeconds: 60
+            periodSeconds: 20
+
+          resources:
+            requests:
+              cpu: "500m"
+              memory: "1Gi"
+
+            limits:
+              cpu: "2"
+              memory: "4Gi"
 
       volumes:
         - name: nextcloud-data
           persistentVolumeClaim:
             claimName: nextcloud-data
 
-        - name: bootstrap
+        - name: bootstrap-script
           configMap:
             name: nextcloud-bootstrap
             defaultMode: 0755
