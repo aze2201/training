@@ -1,0 +1,46 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: nextcloud-bootstrap
+  namespace: nextcloud
+
+data:
+  bootstrap.sh: |
+    #!/bin/bash
+    set -e
+
+    echo "Waiting for Nextcloud installation..."
+
+    until php /var/www/html/occ status | grep -q "installed: true"; do
+      sleep 10
+    done
+
+    echo "Installing OIDC app..."
+
+    php /var/www/html/occ app:install oidc_login || true
+    php /var/www/html/occ app:enable oidc_login || true
+
+    echo "Configuring OIDC..."
+
+    php /var/www/html/occ config:system:set oidc_login_provider_url \
+      --value="${OIDC_PROVIDER_URL}"
+
+    php /var/www/html/occ config:system:set oidc_login_client_id \
+      --value="${OIDC_CLIENT_ID}"
+
+    php /var/www/html/occ config:system:set oidc_login_client_secret \
+      --value="${OIDC_CLIENT_SECRET}"
+
+    php /var/www/html/occ config:system:set oidc_login_auto_redirect \
+      --type=boolean --value=true
+
+    php /var/www/html/occ config:system:set oidc_login_end_session_redirect \
+      --type=boolean --value=true
+
+    php /var/www/html/occ config:system:set allow_user_to_change_display_name \
+      --type=boolean --value=false
+
+    php /var/www/html/occ config:system:set lost_password_link \
+      --value="disabled"
+
+    echo "OIDC configuration complete."
