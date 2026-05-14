@@ -51,6 +51,7 @@ spec:
               set -e
 
               echo "Checking database..."
+              psql -U ${PGUSER} -d appdb
 
               psql -v ON_ERROR_STOP=1 <<EOF
               DO \$\$
