@@ -31,7 +31,7 @@ spec:
               value: "postgres.database.svc.cluster.local"
 
             - name: POSTGRES_DB
-              value: "appdb"
+              value: "nextcloud"
 
             - name: POSTGRES_USER
               value: "appuser"
