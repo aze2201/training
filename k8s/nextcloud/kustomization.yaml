@@ -8,3 +8,4 @@ resources:
   - 04-deployment.yaml
   - 05-service.yaml
   - 02-bootsrap-config-map.yaml
+  - ingress-configmap.yaml
