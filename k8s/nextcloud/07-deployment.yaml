@@ -87,7 +87,7 @@ spec:
             # OIDC (Keycloak)
             # =========================
             - name: OIDC_PROVIDER_URL
-              value: "http://keycloak.keycloak.svc.cluster.local:8080/realms/main"
+              value: "http://keycloak.keycloak.svc.cluster.local:8080/realms/iot"
 
             - name: OIDC_CLIENT_ID
               value: "nextcloud"
