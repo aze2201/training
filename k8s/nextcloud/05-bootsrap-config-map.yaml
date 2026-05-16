@@ -43,4 +43,6 @@ data:
     php /var/www/html/occ config:system:set lost_password_link \
       --value="disabled"
 
+    php occ config:system:set oidc_login_disable_registration --value="false" --type=boolean
+
     echo "OIDC configuration complete."
