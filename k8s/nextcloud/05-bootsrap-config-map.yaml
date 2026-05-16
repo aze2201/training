@@ -47,5 +47,6 @@ data:
     php occ group:adduser admin admin
 
     php occ config:system:set oidc_login_attributes --value='{"id":"preferred_username"}' --type=json
+    php occ config:system:set oidc_login_logout_url --value="https://auth.z-script.io/realms/iot/protocol/openid-connect/logout"
 
     echo "OIDC configuration complete."
