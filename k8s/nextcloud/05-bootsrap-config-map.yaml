@@ -44,5 +44,6 @@ data:
       --value="disabled"
 
     php occ config:system:set oidc_login_disable_registration --value="false" --type=boolean
+    php occ group:adduser admin admin
 
     echo "OIDC configuration complete."
