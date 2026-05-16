@@ -46,8 +46,6 @@ data:
     php occ config:system:set oidc_login_disable_registration --value="false" --type=boolean
     php occ group:adduser admin admin
 
-    php occ user:list | grep -v admin | awk -v FS='- ' '{print $2}' | awk -v FS=':' '{print $1}' | while read line ; do
-      php occ group:adduser admin ${line}
-    done
+    php occ config:system:set oidc_login_attributes_username --value="preferred_username"
 
     echo "OIDC configuration complete."
