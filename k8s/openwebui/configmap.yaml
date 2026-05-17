@@ -10,8 +10,5 @@ data:
   KEYCLOAK_REALM: "iot"
   KEYCLOAK_BASE_URL: "https://auth.z-script.io"
 
-  # Internal Ollama URL
-  OLLAMA_BASE_URL: "http://ollama.ai.svc.cluster.local:11434"
-
   # OpenWebUI
   WEBUI_NAME: "Z-Script AI"
