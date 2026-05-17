@@ -60,6 +60,9 @@ spec:
 
             - name: ENABLE_OAUTH_SIGNUP
               value: "true"
+              
+            - name: ENABLE_ADMIN_APPROVAL
+              value: "false"
 
             - name: OAUTH_MERGE_ACCOUNTS_BY_EMAIL
               value: "true"
