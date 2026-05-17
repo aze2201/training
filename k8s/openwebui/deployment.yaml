@@ -61,8 +61,11 @@ spec:
             - name: ENABLE_OAUTH_SIGNUP
               value: "true"
               
-            - name: ENABLE_ADMIN_APPROVAL
-              value: "false"
+            - name: DEFAULT_USER_ROLE
+              value: "user"
+
+            - name: ENABLE_ADMIN_CHAT_ACCESS=true
+              value: "true"
 
             - name: OAUTH_MERGE_ACCOUNTS_BY_EMAIL
               value: "true"
