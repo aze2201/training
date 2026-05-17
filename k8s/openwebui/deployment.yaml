@@ -68,7 +68,7 @@ spec:
               value: "Keycloak"
 
             - name: OPENID_PROVIDER_URL
-              value: "$(KEYCLOAK_BASE_URL)/realms/$(KEYCLOAK_REALM)/.well-known/openid-configuration"
+              value: "http://keycloak.keycloak.svc.cluster.local:8080/realms/iot/.well-known/openid-configuration"
 
             - name: KEYCLOAK_BASE_URL
               valueFrom:
