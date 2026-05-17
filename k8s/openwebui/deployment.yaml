@@ -54,6 +54,11 @@ spec:
             - name: ENABLE_LOGIN_FORM
               value: "false"
 
+            - name: WEB_SEARCH_TRUST_ENV
+              value: "true"
+            
+
+
             #
             # Keycloak / OAuth
             #
