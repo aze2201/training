@@ -64,7 +64,7 @@ spec:
             - name: DEFAULT_USER_ROLE
               value: "user"
 
-            - name: ENABLE_ADMIN_CHAT_ACCESS=true
+            - name: ENABLE_ADMIN_CHAT_ACCESS
               value: "true"
 
             - name: OAUTH_MERGE_ACCOUNTS_BY_EMAIL
