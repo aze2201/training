@@ -34,7 +34,7 @@ spec:
                   key: WEBUI_NAME
 
             - name: WEBUI_URL
-              value: "https://$(DOMAIN_NAME)"
+              value: "https://ai.z-script.io"
 
             - name: DOMAIN_NAME
               valueFrom:
