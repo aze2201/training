@@ -8,7 +8,7 @@ data:
 
   # Keycloak
   KEYCLOAK_REALM: "iot"
-  KEYCLOAK_BASE_URL: "http://keycloak.keycloak.svc.cluster.local:8080/realms/iot"
+  KEYCLOAK_BASE_URL: "http://keycloak.keycloak.svc.cluster.local:8080"
 
   # OpenWebUI
   WEBUI_NAME: "Z-Script AI"
