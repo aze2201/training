@@ -48,6 +48,12 @@ spec:
                   name: openwebui-secret
                   key: OLLAMA_BASE_URL
 
+            - name: ENABLE_SIGNUP
+              value: "false"
+            
+            - name: ENABLE_LOGIN_FORM
+              value: "false"
+
             #
             # Keycloak / OAuth
             #
