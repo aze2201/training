@@ -1,0 +1,104 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: openwebui
+  namespace: ai
+spec:
+  replicas: 1
+
+  selector:
+    matchLabels:
+      app: openwebui
+
+  template:
+    metadata:
+      labels:
+        app: openwebui
+
+    spec:
+      containers:
+        - name: openwebui
+
+          image: ghcr.io/open-webui/open-webui:main
+
+          imagePullPolicy: Always
+
+          ports:
+            - containerPort: 8080
+
+          env:
+            - name: WEBUI_NAME
+              valueFrom:
+                configMapKeyRef:
+                  name: openwebui-config
+                  key: WEBUI_NAME
+
+            - name: WEBUI_URL
+              value: "https://$(DOMAIN_NAME)"
+
+            - name: DOMAIN_NAME
+              valueFrom:
+                configMapKeyRef:
+                  name: openwebui-config
+                  key: DOMAIN_NAME
+
+            - name: OLLAMA_BASE_URL
+              valueFrom:
+                configMapKeyRef:
+                  name: openwebui-config
+                  key: OLLAMA_BASE_URL
+
+            #
+            # Keycloak / OAuth
+            #
+
+            - name: ENABLE_OAUTH_SIGNUP
+              value: "true"
+
+            - name: OAUTH_MERGE_ACCOUNTS_BY_EMAIL
+              value: "true"
+
+            - name: OAUTH_PROVIDER_NAME
+              value: "Keycloak"
+
+            - name: OPENID_PROVIDER_URL
+              value: "$(KEYCLOAK_BASE_URL)/realms/$(KEYCLOAK_REALM)/.well-known/openid-configuration"
+
+            - name: KEYCLOAK_BASE_URL
+              valueFrom:
+                configMapKeyRef:
+                  name: openwebui-config
+                  key: KEYCLOAK_BASE_URL
+
+            - name: KEYCLOAK_REALM
+              valueFrom:
+                configMapKeyRef:
+                  name: openwebui-config
+                  key: KEYCLOAK_REALM
+
+            - name: OAUTH_CLIENT_ID
+              valueFrom:
+                secretKeyRef:
+                  name: openwebui-secret
+                  key: OAUTH_CLIENT_ID
+
+            - name: OAUTH_CLIENT_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: openwebui-secret
+                  key: OAUTH_CLIENT_SECRET
+
+            - name: WEBUI_SECRET_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: openwebui-secret
+                  key: WEBUI_SECRET_KEY
+
+          volumeMounts:
+            - name: openwebui-data
+              mountPath: /app/backend/data
+
+      volumes:
+        - name: openwebui-data
+          persistentVolumeClaim:
+            claimName: openwebui-data
