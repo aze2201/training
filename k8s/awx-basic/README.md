@@ -44,7 +44,7 @@ default/
 ```
 1 directory, 5 files
 ```
-## Replace Replace default/kustomization.yamldefault/kustomization.yaml file resource file resource
+## Replace resource in  `default/kustomization.yamldefault/kustomization.yaml` 
 
 put right version from git (2.19.1) github.com/ansible/awx-operator/config/default?ref=2.19.
 
