@@ -30,6 +30,53 @@ $ cd awx-operator/config
 $ find. -type f -exec grep -l kube-rbac-proxy {} \;
 #replace "gcr.io/kubebuilder/kube-rbac-proxy:v0.15.0" with "image: docker.io/kubebuilder/kube-rbac-proxy:v0.15.0" in " default/manager_auth_proxy_patch.yaml"
 ```
+
+```
+cat default/manager_auth_proxy_patch.yaml 
+# This patch inject a sidecar container which is a HTTP proxy for the
+# controller manager, it performs RBAC authorization against the Kubernetes API using SubjectAccessReviews.
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: controller-manager
+  namespace: system
+spec:
+  template:
+    spec:
+      containers:
+      - name: kube-rbac-proxy
+        securityContext:
+          allowPrivilegeEscalation: false
+          capabilities:
+            drop:
+            - "ALL"
+        image: docker.io/kubebuilder/kube-rbac-proxy:v0.15.0
+        #image: gcr.io/kubebuilder/kube-rbac-proxy:v0.15.0
+        args:
+        - "--secure-listen-address=0.0.0.0:8443"
+        - "--upstream=http://127.0.0.1:8080/"
+        - "--logtostderr=true"
+        - "--v=0"
+        ports:
+        - containerPort: 8443
+          protocol: TCP
+          name: https
+        resources:
+          limits:
+            cpu: 500m
+            memory: 128Mi
+          requests:
+            cpu: 5m
+            memory: 64Mi
+      - name: awx-manager
+        args:
+        - "--health-probe-bind-address=:6789"
+        - "--metrics-bind-address=127.0.0.1:8080"
+        - "--leader-elect"
+        - "--leader-election-id=awx-operator"
+```
+
+
 ## Final basic configs
 
 ```
@@ -45,69 +92,74 @@ default/
 1 directory, 5 files
 ```
 
+
+
 ## Replace resource in  `default/kustomization.yaml` 
 
 put right version from git (2.19.1) github.com/ansible/awx-operator/config/default?ref=2.19.
-
 
 ```
 $ cat default/kustomization.yaml
 # Adds namespace to all resources.
 namespace: awx
+
 namePrefix: awx-operator-
+
+
 resources:
 #- ../crd
 #- ../rbac
 #- ../manager
-# THIS IS CHANGE
-- github.com/ansible/awx-operator/config/default?ref=2.19.
-# THESE ARE ADDED
+- github.com/ansible/awx-operator/config/default?ref=2.19.1
 - demo.yaml
 - awx-ingress.yaml
 
-apiVersion: kustomize.config.k8s.io/v1beta
+apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 patches:
-```
 - path: manager_auth_proxy_patch.yaml
+```
+
 
 ```
 # not sure needed
 cat default/demo.yaml
 ---
-apiVersion: awx.ansible.com/v1beta
+apiVersion: awx.ansible.com/v1beta1
 kind: AWX
 metadata:
-name: awx-demo
+  name: awx-demo
 spec:
-service_type: nodeport
+  service_type: nodeport
 ```
 
 ```
 $ cat default/awx-ingress.yaml
-apiVersion: networking.k8s.io/v
+apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-name: awx-ingress
-namespace: awx
-annotations:
-nginx.ingress.kubernetes.io/proxy-body-size: "100m"
+  name: awx-ingress
+  namespace: awx
+  annotations:
+    nginx.ingress.kubernetes.io/proxy-body-size: "100m"
 spec:
-ingressClassName: nginx
-rules:
-- host: awx.example.com
-[http:](http:)
-paths:
-- path: /
-pathType: Prefix
-backend:
-service:
-name: awx-operator-awx-demo-service
-port:
-number: 80
+  ingressClassName: nginx
+
+  rules:
+  - host: awx.example.com
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: awx-operator-awx-demo-service
+            port:
+              number: 80
+
+```
 
 # Apply changesApply changes
-```
 
 ```
 kubectl apply -k default/
