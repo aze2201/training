@@ -70,6 +70,7 @@ resources:
 # THESE ARE ADDED
 - demo.yaml
 - awx-ingress.yaml
+```
 
 ```
 apiVersion: kustomize.config.k8s.io/v1beta
