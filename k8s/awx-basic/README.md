@@ -54,13 +54,7 @@ put right version from git (2.19.1) github.com/ansible/awx-operator/config/defau
 $ cat default/kustomization.yaml
 # Adds namespace to all resources.
 namespace: awx
-```
-
-```
 namePrefix: awx-operator-
-```
-
-```
 resources:
 #- ../crd
 #- ../rbac
@@ -70,9 +64,7 @@ resources:
 # THESE ARE ADDED
 - demo.yaml
 - awx-ingress.yaml
-```
 
-```
 apiVersion: kustomize.config.k8s.io/v1beta
 kind: Kustomization
 patches:
@@ -81,8 +73,6 @@ patches:
 
 ```
 # not sure needed
-```
-```
 cat default/demo.yaml
 ---
 apiVersion: awx.ansible.com/v1beta
@@ -92,6 +82,7 @@ name: awx-demo
 spec:
 service_type: nodeport
 ```
+
 ```
 $ cat default/awx-ingress.yaml
 apiVersion: networking.k8s.io/v
@@ -103,10 +94,7 @@ annotations:
 nginx.ingress.kubernetes.io/proxy-body-size: "100m"
 spec:
 ingressClassName: nginx
-```
-```
 rules:
-```
 - host: awx.example.com
 [http:](http:)
 paths:
@@ -119,7 +107,7 @@ port:
 number: 80
 
 # Apply changesApply changes
-
+```
 
 ```
 kubectl apply -k default/
