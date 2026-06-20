@@ -23,7 +23,7 @@ cd awx-operator/config
 ```
 ## FIX ISSUEFIX ISSUE
 
-The issue is https://github.com/ansible/awx/issues/16335 says kube-rbac-proxy:v0.15.0 moved to Docker registry from Google
+The issue is https://github.com/ansible/awx/issues/16335 says 'kube-rbac-proxy:v0.15.0' moved to Docker registry from Google
 
 ```
 $ cd awx-operator/config
@@ -44,7 +44,8 @@ default/
 ```
 1 directory, 5 files
 ```
-## Replace resource in  `default/kustomization.yamldefault/kustomization.yaml` 
+
+## Replace resource in  `default/kustomization.yaml` 
 
 put right version from git (2.19.1) github.com/ansible/awx-operator/config/default?ref=2.19.
 
@@ -54,16 +55,17 @@ $ cat default/kustomization.yaml
 # Adds namespace to all resources.
 namespace: awx
 ```
+
 ```
 namePrefix: awx-operator-
 ```
+
 ```
 resources:
 #- ../crd
 #- ../rbac
 #- ../manager
 # THIS IS CHANGE
-```
 - github.com/ansible/awx-operator/config/default?ref=2.19.
 # THESE ARE ADDED
 - demo.yaml
