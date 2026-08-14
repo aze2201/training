@@ -1,19 +1,34 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: nginx
+  name: wetty
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: nginx
+      app: wetty
   template:
     metadata:
       labels:
-        app: nginx
+        app: wetty
     spec:
       containers:
-        - name: nginx
-          image: nginx:latest
+        - name: wetty
+          image: butlerx/wetty:latest
           ports:
-            - containerPort: 80
+            - containerPort: 3000   # Wetty default port
+          env:
+            # Optional: set the SSH host to connect to (default: localhost)
+            # If you want to connect to a specific container or host, set SSHHOST.
+            - name: SSHHOST
+              value: "localhost"   # change to your target SSH host if needed
+            - name: SSHPORT
+              value: "22"
+          # For security, you might want to limit resources
+          resources:
+            requests:
+              memory: "64Mi"
+              cpu: "100m"
+            limits:
+              memory: "128Mi"
+              cpu: "200m"
